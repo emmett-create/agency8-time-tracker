@@ -1,0 +1,46 @@
+// Agency 8 — Time Tracker options.js
+
+const DEFAULT_CLIENTS = [
+  'BORNTOSTANDOUT','Brodo','Camp','dpHue','EvolveTogether','Facile',
+  'Feals','Fellow','Golden Age Fat','Ilia','Lenox and Sixteenth','MadeGood',
+  'Magna','Masa','Merit','Momofuku','MPH','Nette','Roz','Skinfix','Snif',
+  'Squigs','SYS','Timebeam','TodayTix','Tushy','Vandy',
+];
+
+const DEFAULT_TASKS = [
+  'Meetings','Sourcing','Strategy','Outreach','Reporting','Email','Admin',
+];
+
+async function init() {
+  const s = await chrome.storage.local.get([
+    'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks',
+  ]);
+
+  document.getElementById('inp-name').value      = s.name || '';
+  document.getElementById('inp-url').value       = s.supabaseUrl || '';
+  document.getElementById('inp-key').value       = s.supabaseKey || '';
+  document.getElementById('inp-dashboard').value = s.dashboardUrl || '';
+  document.getElementById('inp-clients').value   = (s.clients || DEFAULT_CLIENTS).join('\n');
+  document.getElementById('inp-tasks').value     = (s.tasks || DEFAULT_TASKS).join('\n');
+
+  document.getElementById('btn-save').addEventListener('click', save);
+}
+
+async function save() {
+  const name        = document.getElementById('inp-name').value.trim();
+  const supabaseUrl = document.getElementById('inp-url').value.trim().replace(/\/$/, '');
+  const supabaseKey = document.getElementById('inp-key').value.trim();
+  const dashboardUrl = document.getElementById('inp-dashboard').value.trim();
+  const clients     = document.getElementById('inp-clients').value
+    .split('\n').map(l => l.trim()).filter(Boolean);
+  const tasks       = document.getElementById('inp-tasks').value
+    .split('\n').map(l => l.trim()).filter(Boolean);
+
+  await chrome.storage.local.set({ name, supabaseUrl, supabaseKey, dashboardUrl, clients, tasks });
+
+  const confirm = document.getElementById('save-confirm');
+  confirm.classList.add('visible');
+  setTimeout(() => confirm.classList.remove('visible'), 2000);
+}
+
+document.addEventListener('DOMContentLoaded', init);
