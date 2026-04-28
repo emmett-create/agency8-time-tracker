@@ -159,10 +159,10 @@
     const byTask = groupSum(entries, 'task_type');
     const taskEntries = Object.entries(byTask).sort((a, b) => b[1] - a[1]);                                                                                                                                 
     charts.task = new Chart(document.getElementById('chart-task'), {
-      type: 'doughnut',                   
-      data: {
+      type: 'doughnut',                                                                                                                                                                                     
+      data: {          
         labels: taskEntries.map(e => e[0]),                                                                                                                                                                 
-        datasets: [{ data: taskEntries.map(e => +(e[1]/60).toFixed(1)), backgroundColor: COLORS }],
+        datasets: [{ data: taskEntries.map(e => +(e[1]/60).toFixed(2)), backgroundColor: COLORS }],
       },                                                                                                                                                                                                    
       options: donutOptions(),                              
     });                                                                                                                                                                                                     
