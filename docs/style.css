@@ -1,44 +1,44 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }                                                                                                                                 
-                                                                                                                                                                                                            
-  :root {                                                                                                                                                                                                   
-    --bg:       #0d0d0d;                                                                                                                                                                                    
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+                                              
+  :root {                                 
+    --bg:       #0d0d0d;
     --bg2:      #141414;                                                                                                                                                                                    
-    --bg3:      #1a1a1a;                                                                                                                                                                                    
+    --bg3:      #1a1a1a;                  
     --border:   #222;                                                                                                                                                                                       
-    --text:     #f0f0f0;                                    
-    --muted:    #666;                                                                                                                                                                                       
-    --accent:   #6c63ff;                  
-    --accent2:  #ff6b9d;                                                                                                                                                                                    
+    --text:     #f0f0f0;                                                                                                                                                                                    
+    --muted:    #666;
+    --accent:   #6c63ff;                                                                                                                                                                                    
+    --accent2:  #ff6b9d;                                    
     --accent3:  #43e97b;                                                                                                                                                                                    
-    --accent4:  #f7971e;                  
+    --accent4:  #f7971e;                                    
   }                                                                                                                                                                                                         
-                                                                                                                                                                                                            
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;                                                                                                                                 
-    background: var(--bg); color: var(--text);              
-    font-size: 14px; line-height: 1.5;                                                                                                                                                                      
-    min-height: 100vh;                                      
+  
+  body {                                                                                                                                                                                                    
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text);                                                                                                                                                              
+    font-size: 14px; line-height: 1.5;                      
+    min-height: 100vh;                        
   }                                                                                                                                                                                                         
-   
+  
   .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }                                                                                                                                        
                                                             
-  /* ── Header ── */                          
-  .header {                                                                                                                                                                                                 
+  /* ── Header ── */                                                                                                                                                                                        
+  .header {                                                 
     background: var(--bg2);
     border-bottom: 1px solid var(--border);                                                                                                                                                                 
-    padding: 16px 0;                                        
+    padding: 16px 0;
   }                                                                                                                                                                                                         
   .header-inner {                                           
     max-width: 1200px; margin: 0 auto; padding: 0 24px;
-    display: flex; align-items: center;       
-  }                                       
-  .logo { font-size: 18px; font-weight: 700; }
-  .logo-sub { margin-left: 10px; color: var(--muted); font-size: 14px; }                                                                                                                                    
-                                              
-  /* ── Filters ── */                                                                                                                                                                                       
+    display: flex; align-items: center;                                                                                                                                                                     
+  }                                           
+  .logo { font-size: 18px; font-weight: 700; }                                                                                                                                                              
+  .logo-sub { margin-left: 10px; color: var(--muted); font-size: 14px; }
+                                                                                                                                                                                                            
+  /* ── Filters ── */                     
   .filters-bar {                                                                                                                                                                                            
     background: var(--bg2);                                                                                                                                                                                 
-    border-bottom: 1px solid var(--border);                                                                                                                                                                 
+    border-bottom: 1px solid var(--border);
     padding: 12px 0;                                                                                                                                                                                        
     position: sticky; top: 0; z-index: 10;                  
   }
@@ -53,73 +53,77 @@
     background: var(--bg3); border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 6px 10px;
     font-size: 13px; font-family: inherit; outline: none; cursor: pointer;                                                                                                                                  
-  }                                                                                                                                                                                                         
+  }                                       
   .filter-group select:focus { border-color: var(--accent); }                                                                                                                                               
                                                                                                                                                                                                             
-  /* ── Multi-select dropdown ── */                         
+  /* ── Multi-select dropdown ── */       
   .multi-select { position: relative; }                                                                                                                                                                     
   .ms-toggle {                                                                                                                                                                                              
     background: var(--bg3); border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 6px 10px;                                                                                                                                              
     font-size: 13px; font-family: inherit; cursor: pointer; 
-    min-width: 130px; text-align: left; outline: none;
-  }                                                                                                                                                                                                         
-  .ms-toggle:focus, .ms-toggle:hover { border-color: var(--accent); }
+    min-width: 130px; text-align: left; outline: none;                                                                                                                                                      
+  }                                           
+  .ms-toggle:focus, .ms-toggle:hover { border-color: var(--accent); }                                                                                                                                       
   .ms-panel {                                                                                                                                                                                               
-    position: absolute; top: calc(100% + 4px); left: 0;     
+    position: absolute; top: calc(100% + 4px); left: 0;                                                                                                                                                     
     background: var(--bg3); border: 1px solid var(--border);                                                                                                                                                
     border-radius: 8px; padding: 6px;                                                                                                                                                                       
-    min-width: 160px; z-index: 100;       
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);                                                                                                                                                                 
+    min-width: 160px; z-index: 100;                                                                                                                                                                         
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     max-height: 240px; overflow-y: auto;                                                                                                                                                                    
-  }                                       
-  .ms-option {                                                                                                                                                                                              
-    display: flex; align-items: center; gap: 8px;                                                                                                                                                           
-    padding: 6px 8px; cursor: pointer; border-radius: 4px;
-    font-size: 13px; white-space: nowrap; user-select: none;                                                                                                                                                
   }                                                                                                                                                                                                         
-  .ms-option:hover { background: var(--bg2); }
-  .ms-option input[type="checkbox"] { cursor: pointer; accent-color: var(--accent); }                                                                                                                       
+  .ms-option {
+    display: flex; align-items: center; gap: 8px;                                                                                                                                                           
+    padding: 6px 8px; cursor: pointer; border-radius: 4px;  
+    font-size: 13px; white-space: nowrap; user-select: none;                                                                                                                                                
+  }                                                         
+  .ms-option:hover { background: var(--bg2); }                                                                                                                                                              
+  .ms-option input[type="checkbox"] { cursor: pointer; accent-color: var(--accent); }
+  .ms-option--all {                                                                                                                                                                                         
+    border-bottom: 1px solid var(--border);                                                                                                                                                                 
+    margin-bottom: 4px; padding-bottom: 8px;
+    font-weight: 500; color: var(--text);                                                                                                                                                                   
+  }                                                         
                                                                                                                                                                                                             
-  .btn-refresh {                          
+  .btn-refresh {                                            
     background: none; border: 1px solid var(--border);                                                                                                                                                      
-    color: var(--muted); border-radius: 6px;                                                                                                                                                                
-    padding: 6px 12px; font-size: 13px; cursor: pointer;
-    margin-left: auto;                                                                                                                                                                                      
-    transition: all 0.15s;                                                                                                                                                                                  
-  }                                       
-  .btn-refresh:hover { border-color: var(--accent); color: var(--accent); }                                                                                                                                 
+    color: var(--muted); border-radius: 6px;
+    padding: 6px 12px; font-size: 13px; cursor: pointer;                                                                                                                                                    
+    margin-left: auto;                                      
+    transition: all 0.15s;
+  }                                                                                                                                                                                                         
+  .btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
                                                                                                                                                                                                             
-  /* ── Cards ── */
-  .cards {                                                                                                                                                                                                  
-    display: grid; grid-template-columns: repeat(4, 1fr);   
-    gap: 16px; margin: 24px 0;                
+  /* ── Cards ── */                                                                                                                                                                                         
+  .cards {
+    display: grid; grid-template-columns: repeat(2, 1fr);                                                                                                                                                   
+    gap: 16px; margin: 24px 0;                              
   }                                       
   .card {
     background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
     border-radius: 10px; padding: 18px 20px;
   }                                                                                                                                                                                                         
-  .card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }                                                                               
+  .card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
   .card-value { font-size: 26px; font-weight: 700; color: var(--text); }
                                                                                                                                                                                                             
-  /* ── Charts ── */                                        
+  /* ── Charts ── */                          
   .charts-row {                                                                                                                                                                                             
-    display: grid; grid-template-columns: 1fr 1fr;                                                                                                                                                          
-    gap: 16px; margin-bottom: 16px;           
-  }                                                                                                                                                                                                         
-  .chart-card {                                             
-    background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
-    border-radius: 10px; padding: 20px;       
-  }                                                                                                                                                                                                         
-  .chart-card--wide { grid-column: span 1; }                
+    display: grid; grid-template-columns: 1fr 1fr;          
+    gap: 16px; margin-bottom: 16px;                                                                                                                                                                         
+  }                                                         
+  .chart-card {                                                                                                                                                                                             
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;   
+  }
   .chart-title {                                                                                                                                                                                            
     font-size: 12px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.6px; color: var(--muted); margin-bottom: 16px;                                                                                                                                        
   }                                                         
-                                                                                                                                                                                                            
-  /* ── Setup card ── */
+                                          
+  /* ── Setup card ── */                                                                                                                                                                                    
   .setup-card {                                                                                                                                                                                             
-    background: var(--bg2); border: 1px solid var(--border);
+    background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
     border-radius: 10px; padding: 32px; margin: 40px auto;                                                                                                                                                  
     max-width: 480px; text-align: center;                   
   }                                           
@@ -131,9 +135,6 @@
                                                                                                                                                                                                             
   /* ── Responsive ── */
   @media (max-width: 800px) {                                                                                                                                                                               
-    .cards { grid-template-columns: repeat(2, 1fr); }       
+    .cards { grid-template-columns: 1fr 1fr; }              
     .charts-row { grid-template-columns: 1fr; }                                                                                                                                                             
-  }                                                         
-  @media (max-width: 500px) {             
-    .cards { grid-template-columns: 1fr 1fr; }
   }
