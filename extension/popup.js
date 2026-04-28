@@ -7,9 +7,9 @@ const DEFAULT_CLIENTS = [
   'Squigs','SYS','Timebeam','TodayTix','Tushy','Vandy',
 ];
 
-const DEFAULT_TASKS = [
-  'Meetings','Sourcing','Strategy','Outreach','Reporting','Email','Admin',
-];
+const DEFAULT_TASKS = [                                   
+    'Meetings','Sourcing','Outreach/Response','Reporting','Shopify','Strategy',                                                                                                                             
+  ];
 
 let timerInterval = null;
 let settings = {};
