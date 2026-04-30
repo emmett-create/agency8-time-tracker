@@ -3,13 +3,19 @@
   let allEntries = [];                                                                                                                                                                                      
   let charts = {};                                                                                                                                                                                          
                                                                                                                                                                                                             
-  const TASK_COLORS = {                                                                                                                                                                                     
-    'Meetings':          '#6c63ff',                                                                                                                                                                         
-    'Sourcing':          '#ff6b9d',                                                                                                                                                                         
-    'Outreach/Response': '#43e97b',                         
-    'Reporting':         '#f7971e',           
-    'Shopify':           '#4fc3f7',                                                                                                                                                                         
-    'Strategy':          '#ff8a65',       
+  const TASK_COLORS = {                       
+    'Meetings':               '#6c63ff',  
+    'Sourcing':               '#ff6b9d',
+    'Strategy/Planning':      '#43e97b',                                                                                                                                                                    
+    'Creator Comms (DM)':     '#f7971e',      
+    'Creator Comms (Email)':  '#4fc3f7',                                                                                                                                                                    
+    'Reporting':              '#ff8a65',                    
+    'Shopify':                '#ba68c8',                                                                                                                                                                    
+    'Spreadsheet Management': '#4db6ac',  
+    'Content Brief':          '#e8c96b',                                                                                                                                                                    
+    'Outreach Copy':          '#f06292',                                                                                                                                                                    
+    'ShopMy':                 '#aed581',      
+    'TikTok Shop':            '#ff7043',                                                                                                                                                                    
   };                                                                                                                                                                                                        
                                                                                                                                                                                                             
   async function init() {                                                                                                                                                                                   
