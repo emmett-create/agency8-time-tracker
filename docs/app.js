@@ -3,19 +3,22 @@
   let allEntries = [];                                                                                                                                                                                      
   let charts = {};                                                                                                                                                                                          
                                                                                                                                                                                                             
-  const TASK_COLORS = {                       
-    'Meetings':               '#6c63ff',  
-    'Sourcing':               '#ff6b9d',
-    'Strategy/Planning':      '#43e97b',                                                                                                                                                                    
-    'Creator Comms (DM)':     '#f7971e',      
-    'Creator Comms (Email)':  '#4fc3f7',                                                                                                                                                                    
-    'Reporting':              '#ff8a65',                    
-    'Shopify':                '#ba68c8',                                                                                                                                                                    
-    'Spreadsheet Management': '#4db6ac',  
-    'Content Brief':          '#e8c96b',                                                                                                                                                                    
-    'Outreach Copy':          '#f06292',                                                                                                                                                                    
-    'ShopMy':                 '#aed581',      
-    'TikTok Shop':            '#ff7043',                                                                                                                                                                    
+  const TASK_COLORS = {                                                                                                                                                                                     
+    'Meetings (Ext)':        '#6c63ff',                                                                                                                                                                     
+    'Meetings (Int)':        '#ff6b9d',                                                                                                                                                                     
+    'Sourcing/List Building':'#43e97b',                                                                                                                                                                     
+    'Strategy/Planning':     '#f7971e',                     
+    'Paid':                  '#4fc3f7',                                                                                                                                                                     
+    'Client Comms':          '#ff8a65',                                                                                                                                                                     
+    'Creator Comms (DM)':    '#ba68c8',                                                                                                                                                                     
+    'Creator Comms (Email)': '#4db6ac',                                                                                                                                                                     
+    'Reporting':             '#e8c96b',                     
+    'Shopify':               '#f06292',                                                                                                                                                                     
+    'Spreadsheet Management':'#aed581',                     
+    'Content Brief':         '#ff7043',                                                                                                                                                                     
+    'Outreach Copy':         '#80cbc4',                                                                                                                                                                     
+    'ShopMy':                '#ffb74d',                                                                                                                                                                     
+    'TikTok Shop':           '#ce93d8',                                                                                                                                                                     
   };                                                                                                                                                                                                        
                                                                                                                                                                                                             
   async function init() {                                                                                                                                                                                   
