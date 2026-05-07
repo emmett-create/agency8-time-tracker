@@ -21,19 +21,19 @@
   }                                                         
                                                                                                                                                                                                             
   .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }                                                                                                                                        
-  
+   
   /* ── Header ── */                                                                                                                                                                                        
   .header {                                                 
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
-    padding: 16px 0;                                                                                                                                                                                        
-  }
-  .header-inner {                                                                                                                                                                                           
-    max-width: 1200px; margin: 0 auto; padding: 0 24px;     
-    display: flex; align-items: center;                                                                                                                                                                     
-  }
-  .logo { font-size: 18px; font-weight: 700; }                                                                                                                                                              
-  .logo-sub { margin-left: 10px; color: var(--muted); font-size: 14px; }
+    padding: 16px 0;
+  }                                                                                                                                                                                                         
+  .header-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 24px;                                                                                                                                                     
+    display: flex; align-items: center;                     
+  }                                                                                                                                                                                                         
+  .logo { font-size: 18px; font-weight: 700; }
+  .logo-sub { margin-left: 10px; color: var(--muted); font-size: 14px; }                                                                                                                                    
                                                                                                                                                                                                             
   /* ── Filters ── */
   .filters-bar {                                                                                                                                                                                            
@@ -41,48 +41,48 @@
     border-bottom: 1px solid var(--border);                                                                                                                                                                 
     padding: 12px 0;
     position: sticky; top: 0; z-index: 10;                                                                                                                                                                  
-  }                                                         
+  }                                                                                                                                                                                                         
   .filters-inner {
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;                                                                                                                                         
-  }
-  .filter-group {                                                                                                                                                                                           
-    display: flex; align-items: center; gap: 6px;           
+  }                                                         
+  .filter-group {
+    display: flex; align-items: center; gap: 6px;
   }                                                                                                                                                                                                         
   .filter-group label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; white-space: nowrap; }
   .filter-group select {                                                                                                                                                                                    
     background: var(--bg3); border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 6px 10px;                                                                                                                                              
-    font-size: 13px; font-family: inherit; outline: none; cursor: pointer;                                                                                                                                  
-  }
-  .filter-group select:focus { border-color: var(--accent); }                                                                                                                                               
+    font-size: 13px; font-family: inherit; outline: none; cursor: pointer;
+  }                                                                                                                                                                                                         
+  .filter-group select:focus { border-color: var(--accent); }
   /* ── Multi-select dropdowns ── */                                                                                                                                                                        
-  .multi-select { position: relative; }
+  .multi-select { position: relative; }                     
   .ms-trigger {                                                                                                                                                                                             
     background: var(--bg3); border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 6px 10px;                                                                                                                                              
-    font-size: 13px; font-family: inherit; cursor: pointer; 
-    white-space: nowrap; transition: border-color 0.15s;                                                                                                                                                    
-  }
-  .ms-trigger:hover { border-color: var(--accent); }                                                                                                                                                        
+    font-size: 13px; font-family: inherit; cursor: pointer;                                                                                                                                                 
+    white-space: nowrap; transition: border-color 0.15s;
+  }                                                                                                                                                                                                         
+  .ms-trigger:hover { border-color: var(--accent); }        
   .ms-dropdown {                                                                                                                                                                                            
-    position: absolute; top: calc(100% + 4px); left: 0;
+    position: absolute; top: calc(100% + 4px); left: 0;     
     background: var(--bg3); border: 1px solid var(--border);                                                                                                                                                
-    border-radius: 8px; padding: 6px 0;                                                                                                                                                                     
-    min-width: 180px; max-height: 240px; overflow-y: auto;
+    border-radius: 8px; padding: 6px 0;
+    min-width: 180px; max-height: 240px; overflow-y: auto;                                                                                                                                                  
     z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4);                                                                                                                                                   
   }                                                                                                                                                                                                         
   .ms-item {                                                                                                                                                                                                
     display: flex; align-items: center; gap: 8px;                                                                                                                                                           
-    padding: 6px 12px; font-size: 13px; cursor: pointer;    
+    padding: 6px 12px; font-size: 13px; cursor: pointer;
     color: var(--text); transition: background 0.1s;                                                                                                                                                        
-  }
-  .ms-item:hover { background: #222; }                                                                                                                                                                      
-  .ms-item input { accent-color: var(--accent); cursor: pointer; }
+  }                                                                                                                                                                                                         
+  .ms-item:hover { background: #222; }
+  .ms-item input { accent-color: var(--accent); cursor: pointer; }                                                                                                                                          
   .ms-item--all { border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 8px; font-weight: 600; }                                                                                      
                                                                                                                                                                                                             
   .btn-refresh {                                                                                                                                                                                            
     background: none; border: 1px solid var(--border);                                                                                                                                                      
-    color: var(--muted); border-radius: 6px;                
+    color: var(--muted); border-radius: 6px;                                                                                                                                                                
     padding: 6px 12px; font-size: 13px; cursor: pointer;                                                                                                                                                    
     margin-left: auto;
     transition: all 0.15s;                                                                                                                                                                                  
@@ -91,7 +91,7 @@
                                                                                                                                                                                                             
   /* ── Cards ── */
   .cards {                                                                                                                                                                                                  
-    display: grid; grid-template-columns: repeat(2, 1fr);   
+    display: grid; grid-template-columns: repeat(3, 1fr);   
     gap: 16px; margin: 24px 0;                                                                                                                                                                              
   }
   .card {                                                                                                                                                                                                   
@@ -100,59 +100,73 @@
   }
   .card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }                                                                               
   .card-value { font-size: 26px; font-weight: 700; color: var(--text); }                                                                                                                                    
-  
+                                                                                                                                                                                                            
   /* ── Charts ── */                                                                                                                                                                                        
-  .charts-row {                                             
-    display: grid; grid-template-columns: 1fr 1fr;                                                                                                                                                          
-    gap: 16px; margin-bottom: 16px;                         
-  }
+  .charts-row {                                                                                                                                                                                             
+    display: grid; grid-template-columns: 1fr 1fr;          
+    gap: 16px; margin-bottom: 16px;
+  }                                                                                                                                                                                                         
   .chart-card {
     background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
-    border-radius: 10px; padding: 20px;
-  }                                                                                                                                                                                                         
-  .chart-card--wide { grid-column: span 1; }                
+    border-radius: 10px; padding: 20px;                     
+  }
+  .chart-card--wide { grid-column: span 1; }
   .chart-title {                                                                                                                                                                                            
     font-size: 12px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.6px; color: var(--muted); margin-bottom: 16px;                                                                                                                                        
   }                                                                                                                                                                                                         
+  .chart-title-row {
+    display: flex; justify-content: space-between; align-items: center;                                                                                                                                     
+    margin-bottom: 16px;                                    
+  }                                                                                                                                                                                                         
+  .chart-title-row .chart-title { margin-bottom: 0; }       
+  .chart-toggles { display: flex; gap: 4px; }                                                                                                                                                               
+  .chart-toggle {
+    background: none; border: 1px solid var(--border); color: var(--muted);                                                                                                                                 
+    border-radius: 5px; padding: 3px 10px; font-size: 11px;                                                                                                                                                 
+    font-weight: 600; cursor: pointer; transition: all 0.15s;                                                                                                                                               
+    font-family: inherit;                                                                                                                                                                                   
+  }                                                                                                                                                                                                         
+  .chart-toggle:hover { border-color: #444; color: #aaa; }  
+  .chart-toggle.active { border-color: var(--accent); color: var(--accent); }                                                                                                                               
   
   /* ── Table ── */                                                                                                                                                                                         
   .table-card {                                             
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; margin-bottom: 40px; overflow: hidden;                                                                                                                                             
+    background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
+    border-radius: 10px; margin-bottom: 40px; overflow: hidden;
+  }                                                                                                                                                                                                         
+  .table-header {
+    display: flex; justify-content: space-between; align-items: center;                                                                                                                                     
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
   }
-  .table-header {                                                                                                                                                                                           
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 20px; border-bottom: 1px solid var(--border);                                                                                                                                             
-  }
-  .table-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }                                                                                
+  .table-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
   .btn-export {                                                                                                                                                                                             
     background: none; border: 1px solid var(--border);
     color: var(--muted); border-radius: 6px;                                                                                                                                                                
     padding: 5px 12px; font-size: 12px; cursor: pointer;    
     transition: all 0.15s;                                                                                                                                                                                  
-  }
-  .btn-export:hover { border-color: var(--accent); color: var(--accent); }                                                                                                                                  
-  .table-wrap { overflow-x: auto; }                                                                                                                                                                         
-  table { width: 100%; border-collapse: collapse; }
-  thead th {                                                                                                                                                                                                
-    text-align: left; padding: 10px 20px;                                                                                                                                                                   
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.6px; color: var(--muted);                                                                                                                                                             
-    border-bottom: 1px solid var(--border);                 
   }                                                                                                                                                                                                         
-  tbody tr { border-bottom: 1px solid #111; }               
+  .btn-export:hover { border-color: var(--accent); color: var(--accent); }
+  .table-wrap { overflow-x: auto; }                                                                                                                                                                         
+  table { width: 100%; border-collapse: collapse; }         
+  thead th {                                                                                                                                                                                                
+    text-align: left; padding: 10px 20px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;                                                                                                                                           
+    letter-spacing: 0.6px; color: var(--muted);             
+    border-bottom: 1px solid var(--border);                                                                                                                                                                 
+  }                                                                                                                                                                                                         
+  tbody tr { border-bottom: 1px solid #111; }
   tbody tr:last-child { border-bottom: none; }                                                                                                                                                              
-  tbody tr:hover { background: #161616; }
-  tbody td { padding: 10px 20px; font-size: 13px; color: var(--text); }                                                                                                                                     
+  tbody tr:hover { background: #161616; }                                                                                                                                                                   
+  tbody td { padding: 10px 20px; font-size: 13px; color: var(--text); }
   tbody td.muted { color: var(--muted); }                                                                                                                                                                   
-  
+                                                            
   /* ── Setup card ── */                                                                                                                                                                                    
   .setup-card {                                             
-    background: var(--bg2); border: 1px solid var(--border);                                                                                                                                                
-    border-radius: 10px; padding: 32px; margin: 40px auto;  
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 32px; margin: 40px auto;                                                                                                                                                  
     max-width: 480px; text-align: center;                                                                                                                                                                   
-  }
+  }                                                                                                                                                                                                         
   .setup-card h2 { margin-bottom: 12px; }                                                                                                                                                                   
   .setup-card p { color: var(--muted); line-height: 1.6; }                                                                                                                                                  
   .setup-card code { color: var(--accent); }
@@ -161,9 +175,9 @@
                                                                                                                                                                                                             
   /* ── Responsive ── */                                    
   @media (max-width: 800px) {
-    .cards { grid-template-columns: repeat(2, 1fr); }                                                                                                                                                       
+    .cards { grid-template-columns: repeat(3, 1fr); }                                                                                                                                                       
     .charts-row { grid-template-columns: 1fr; }
   }                                                                                                                                                                                                         
   @media (max-width: 500px) {                               
-    .cards { grid-template-columns: 1fr 1fr; }                                                                                                                                                              
+    .cards { grid-template-columns: 1fr; }                                                                                                                                                                  
   }
