@@ -1,142 +1,149 @@
 <!DOCTYPE html>                                                                                                                                                                                           
-  <html lang="en">
+  <html lang="en">                                                                                                                                                                                          
   <head>                                                                                                                                                                                                    
-    <meta charset="utf-8">                                  
+    <meta charset="utf-8">                                                                                                                                                                                  
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agency 8 — Time Tracker</title>                                                                                                                                                                  
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>                                                                                                               
-  </head>                                                                                                                                                                                                   
+    <link rel="stylesheet" href="style.css">                
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  </head>
   <body>
-                                                                                                                                                                                                            
-    <div class="app">                                                                                                                                                                                       
-  
-      <!-- Header -->                                                                                                                                                                                       
-      <header class="header">                               
+
+    <div class="app">
+
+      <!-- Header -->
+      <header class="header">
         <div class="header-inner">
           <div class="header-left">
             <span class="logo">Agency 8</span>
-            <span class="logo-sub">Time Tracker</span>                                                                                                                                                      
+            <span class="logo-sub">Time Tracker</span>
           </div>
-        </div>                                                                                                                                                                                              
-      </header>                                             
+        </div>
+      </header>
 
-      <!-- Not configured -->                                                                                                                                                                               
+      <!-- Not configured -->
       <div id="view-setup" class="hidden container">
-        <div class="setup-card">                                                                                                                                                                            
-          <h2>Setup Required</h2>                           
-          <p>Open <code>docs/config.js</code> and fill in your Supabase URL and key.</p>                                                                                                                    
-        </div>                                                                                                                                                                                              
-      </div>                                                                                                                                                                                                
-                                                                                                                                                                                                            
-      <!-- Main dashboard -->                               
+        <div class="setup-card">
+          <h2>Setup Required</h2>
+          <p>Open <code>docs/config.js</code> and fill in your Supabase URL and key.</p>
+        </div>
+      </div>
+
+      <!-- Main dashboard -->
       <div id="view-main" class="hidden">
-                                                                                                                                                                                                            
-        <!-- Filters -->
-        <div class="filters-bar">                                                                                                                                                                           
-          <div class="container filters-inner">             
-            <div class="filter-group">                                                                                                                                                                      
-              <label>From</label>
-              <input type="date" id="fil-from">                                                                                                                                                             
-            </div>                                          
+                                              
+        <!-- Filters -->                  
+        <div class="filters-bar">
+          <div class="container filters-inner">                                                                                                                                                             
             <div class="filter-group">
-              <label>To</label>
+              <label>From</label>                                                                                                                                                                           
+              <input type="date" id="fil-from">             
+            </div>                        
+            <div class="filter-group">
+              <label>To</label>                                                                                                                                                                             
               <input type="date" id="fil-to">
-            </div>
-            <div class="filter-group">
-              <label>Person</label>
-              <div class="multi-select">
-                <button class="ms-trigger" id="ms-person-btn">Everyone ▾</button>                                                                                                                           
-                <div class="ms-dropdown hidden" id="ms-person-list"></div>                                                                                                                                  
-              </div>                                                                                                                                                                                        
             </div>                                                                                                                                                                                          
+            <div class="filter-group">                      
+              <label>Person</label>
+              <div class="multi-select">                                                                                                                                                                    
+                <button class="ms-trigger" id="ms-person-btn">Everyone ▾</button>
+                <div class="ms-dropdown hidden" id="ms-person-list"></div>                                                                                                                                  
+              </div>                                        
+            </div>
             <div class="filter-group">                                                                                                                                                                      
-              <label>Client</label>                         
-              <div class="multi-select">
+              <label>Client</label>           
+              <div class="multi-select">                                                                                                                                                                    
                 <button class="ms-trigger" id="ms-client-btn">All Clients ▾</button>
                 <div class="ms-dropdown hidden" id="ms-client-list"></div>                                                                                                                                  
-              </div>
+              </div>                          
             </div>                                                                                                                                                                                          
-            <button id="btn-refresh" class="btn-refresh">↻ Refresh</button>
-          </div>                                                                                                                                                                                            
-        </div>
-                                                                                                                                                                                                            
+            <div class="filter-group">                      
+              <label>Task</label>                                                                                                                                                                           
+              <div class="multi-select">
+                <button class="ms-trigger" id="ms-task-btn">All Tasks ▾</button>                                                                                                                            
+                <div class="ms-dropdown hidden" id="ms-task-list"></div>
+              </div>                      
+            </div>
+            <button id="btn-refresh" class="btn-refresh">↻ Refresh</button>                                                                                                                                 
+          </div>                              
+        </div>                                                                                                                                                                                              
+                                                            
         <div class="container">                                                                                                                                                                             
-  
+                                          
           <!-- Summary cards -->                                                                                                                                                                            
-          <div class="cards">                               
+          <div class="cards">                                                                                                                                                                               
             <div class="card">
-              <div class="card-label">Total Hours</div>
-              <div class="card-value" id="stat-total">—</div>                                                                                                                                               
-            </div>
-            <div class="card">                                                                                                                                                                              
-              <div class="card-label">Top Client</div>      
-              <div class="card-value" id="stat-top-client">—</div>                                                                                                                                          
-            </div>
-            <div class="card">                                                                                                                                                                              
-              <div class="card-label">Top Task</div>        
+              <div class="card-label">Total Hours</div>                                                                                                                                                     
+              <div class="card-value" id="stat-total">—</div>
+            </div>                        
+            <div class="card">
+              <div class="card-label">Top Client</div>                                                                                                                                                      
+              <div class="card-value" id="stat-top-client">—</div>
+            </div>                                                                                                                                                                                          
+            <div class="card">                              
+              <div class="card-label">Top Task</div>                                                                                                                                                        
               <div class="card-value" id="stat-top-task">—</div>
             </div>                                                                                                                                                                                          
-          </div>
-                                                                                                                                                                                                            
-          <!-- Charts -->                                   
+          </div>                                            
+
+          <!-- Charts -->                                                                                                                                                                                   
           <div class="charts-row">
-            <div class="chart-card">
-              <div class="chart-title">Hours by Client</div>
-              <canvas id="chart-client"></canvas>                                                                                                                                                           
-            </div>
             <div class="chart-card">                                                                                                                                                                        
-              <div class="chart-title-row">                 
-                <div class="chart-title">Hours by Person</div>                                                                                                                                              
-                <div class="chart-toggles">
-                  <button class="chart-toggle active" data-chart="person" data-mode="task">By Task</button>                                                                                                 
+              <div class="chart-title">Hours by Client</div>
+              <canvas id="chart-client"></canvas>
+            </div>                        
+            <div class="chart-card">
+              <div class="chart-title-row">                                                                                                                                                                 
+                <div class="chart-title">Hours by Person</div>
+                <div class="chart-toggles">                                                                                                                                                                 
+                  <button class="chart-toggle active" data-chart="person" data-mode="task">By Task</button>
                   <button class="chart-toggle" data-chart="person" data-mode="client">By Client</button>                                                                                                    
-                </div>                                                                                                                                                                                      
+                </div>                        
               </div>                                                                                                                                                                                        
               <canvas id="chart-person"></canvas>                                                                                                                                                           
-            </div>                                          
-          </div>
-
-          <div class="charts-row">
-            <div class="chart-card">
-              <div class="chart-title">Hours by Task Type</div>                                                                                                                                             
-              <canvas id="chart-task"></canvas>
             </div>                                                                                                                                                                                          
-            <div class="chart-card chart-card--wide">       
-              <div class="chart-title">Daily Hours (this period)</div>                                                                                                                                      
-              <canvas id="chart-daily"></canvas>
-            </div>                                                                                                                                                                                          
-          </div>                                            
+          </div>                                                                                                                                                                                            
                                                                                                                                                                                                             
-          <!-- Entries table -->                            
-          <div class="table-card">
-            <div class="table-header">
-              <span class="table-title">All Entries</span>
+          <div class="charts-row">                          
+            <div class="chart-card">
+              <div class="chart-title">Hours by Task Type</div>
+              <canvas id="chart-task"></canvas>
+            </div>
+            <div class="chart-card chart-card--wide">                                                                                                                                                       
+              <div class="chart-title">Daily Hours (this period)</div>
+              <canvas id="chart-daily"></canvas>                                                                                                                                                            
+            </div>                                          
+          </div>                                                                                                                                                                                            
+  
+          <!-- Entries table -->                                                                                                                                                                            
+          <div class="table-card">                          
+            <div class="table-header">                                                                                                                                                                      
+              <span class="table-title">All Entries</span>  
               <button id="btn-export" class="btn-export">Export CSV</button>
-            </div>                                                                                                                                                                                          
+            </div>                        
             <div class="table-wrap">
               <table id="entries-table">                                                                                                                                                                    
-                <thead>                                                                                                                                                                                     
-                  <tr>
+                <thead>                   
+                  <tr>                                                                                                                                                                                      
                     <th>Date</th>                                                                                                                                                                           
-                    <th>Person</th>                         
-                    <th>Client</th>
-                    <th>Task</th>
-                    <th>Duration</th>
-                    <th>Notes</th>                                                                                                                                                                          
+                    <th>Person</th>
+                    <th>Client</th>                                                                                                                                                                         
+                    <th>Task</th>                           
+                    <th>Duration</th>         
+                    <th>Notes</th>        
                   </tr>
                 </thead>                                                                                                                                                                                    
-                <tbody id="entries-body"></tbody>           
-              </table>
-            </div>
+                <tbody id="entries-body"></tbody>
+              </table>                                                                                                                                                                                      
+            </div>                                          
           </div>
-
-        </div>                                                                                                                                                                                              
+                                              
+        </div>                            
       </div>
                                                                                                                                                                                                             
-    </div>                                                  
-
-    <script src="config.js"></script>
+    </div>
+                                                                                                                                                                                                            
+    <script src="config.js"></script>                       
     <script src="app.js"></script>
-  </body>
+  </body>                                     
   </html>
