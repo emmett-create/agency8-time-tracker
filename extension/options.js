@@ -2,9 +2,9 @@
                                                                                                                                                                                                             
   const DEFAULT_CLIENTS = [                                                                                                                                                                                 
     'BORNTOSTANDOUT','Brodo','Counter','Emma Relief','EvolveTogether',                                                                                                                                      
-    'Feals','Harper Wilde','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',
+    'Feals','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',                                                                                                       
     'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',                                                                                                                                          
-    'Nette','Roz','Snif','Squigs','SYS','Timebeam','TodayTix','Tushy',
+    'Nette','Pattern','Raazi','Roz','Snif','Squigs','Stardust','SYS','Timebeam','TodayTix','Tushy',
   ];                                                                                                                                                                                                        
                                                                                                                                                                                                             
   const DEFAULT_TASKS = [                                                                                                                                                                                   
