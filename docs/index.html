@@ -36,26 +36,33 @@
       <div class="filters-bar">
         <div class="container filters-inner">
           <div class="filter-group">
-            <label>Period</label>
-            <select id="fil-period">
-              <option value="today">Today</option>
-              <option value="week" selected>This Week</option>
-              <option value="month">This Month</option>
-              <option value="last_month">Last Month</option>
-              <option value="all">All Time</option>
-            </select>
+            <label>From</label>
+            <input type="date" id="fil-from">
+          </div>
+          <div class="filter-group">
+            <label>To</label>
+            <input type="date" id="fil-to">
           </div>
           <div class="filter-group">
             <label>Person</label>
-            <select id="fil-person">
-              <option value="">Everyone</option>
-            </select>
+            <div class="multi-select">
+              <button class="ms-trigger" id="ms-person-btn">Everyone ▾</button>
+              <div class="ms-dropdown hidden" id="ms-person-list"></div>
+            </div>
           </div>
           <div class="filter-group">
             <label>Client</label>
-            <select id="fil-client">
-              <option value="">All Clients</option>
-            </select>
+            <div class="multi-select">
+              <button class="ms-trigger" id="ms-client-btn">All Clients ▾</button>
+              <div class="ms-dropdown hidden" id="ms-client-list"></div>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Task</label>
+            <div class="multi-select">
+              <button class="ms-trigger" id="ms-task-btn">All Tasks ▾</button>
+              <div class="ms-dropdown hidden" id="ms-task-list"></div>
+            </div>
           </div>
           <button id="btn-refresh" class="btn-refresh">↻ Refresh</button>
         </div>
@@ -74,12 +81,8 @@
             <div class="card-value" id="stat-top-client">—</div>
           </div>
           <div class="card">
-            <div class="card-label">Top Person</div>
-            <div class="card-value" id="stat-top-person">—</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Entries</div>
-            <div class="card-value" id="stat-entries">—</div>
+            <div class="card-label">Top Task</div>
+            <div class="card-value" id="stat-top-task">—</div>
           </div>
         </div>
 
@@ -90,7 +93,13 @@
             <canvas id="chart-client"></canvas>
           </div>
           <div class="chart-card">
-            <div class="chart-title">Hours by Person</div>
+            <div class="chart-title-row">
+              <div class="chart-title">Hours by Person</div>
+              <div class="chart-toggles">
+                <button class="chart-toggle active" data-chart="person" data-mode="task">By Task</button>
+                <button class="chart-toggle" data-chart="person" data-mode="client">By Client</button>
+              </div>
+            </div>
             <canvas id="chart-person"></canvas>
           </div>
         </div>

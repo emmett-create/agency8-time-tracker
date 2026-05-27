@@ -93,19 +93,113 @@ body {
 .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #666; }
 .section-total { font-size: 12px; font-weight: 600; color: #6c63ff; }
 
+/* ── Day tabs ── */
+.day-tabs { display: flex; gap: 4px; }
+.day-tab {
+  background: none; border: 1px solid #2a2a2a; color: #666;
+  border-radius: 5px; padding: 3px 9px; font-size: 11px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;
+  cursor: pointer; transition: all 0.15s;
+}
+.day-tab:hover { border-color: #444; color: #aaa; }
+.day-tab.active { border-color: #6c63ff; color: #6c63ff; }
+
 .entry-item {
   display: flex; justify-content: space-between; align-items: center;
   padding: 7px 0;
   border-bottom: 1px solid #1a1a1a;
 }
 .entry-item:last-child { border-bottom: none; }
-.entry-left { display: flex; flex-direction: column; gap: 2px; }
+.entry-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.entry-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .entry-client { font-size: 13px; font-weight: 500; }
 .entry-task { font-size: 11px; color: #666; }
 .entry-duration { font-size: 13px; font-weight: 600; color: #aaa; }
 .entry-notes { font-size: 11px; color: #555; font-style: italic; margin-top: 1px; }
 
+.btn-edit {
+  background: none; border: 1px solid #2a2a2a; color: #555;
+  border-radius: 4px; padding: 2px 7px; font-size: 11px;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-edit:hover { border-color: #6c63ff; color: #6c63ff; }
+
+/* ── Edit form ── */
+.edit-form { width: 100%; padding: 4px 0 6px; }
+.edit-actions { display: flex; gap: 6px; margin-top: 8px; }
+.btn-save-edit {
+  background: #6c63ff; color: #fff; border: none;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  font-weight: 600; cursor: pointer;
+}
+.btn-save-edit:hover { background: #5a52e0; }
+.btn-delete-edit {
+  background: none; border: 1px solid #ff4757; color: #ff4757;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  cursor: pointer;
+}
+.btn-delete-edit:hover { background: #ff475722; }
+.btn-cancel-edit {
+  background: none; border: 1px solid #2a2a2a; color: #666;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  cursor: pointer; margin-left: auto;
+}
+.btn-cancel-edit:hover { border-color: #444; color: #aaa; }
+
 .no-entries { color: #444; font-size: 12px; text-align: center; padding: 10px 0; }
+
+/* ── Split form ── */
+.split-form { width: 100%; padding: 4px 0 6px; }
+.split-header { font-size: 12px; font-weight: 600; color: #aaa; margin-bottom: 8px; }
+.split-rows { margin-bottom: 6px; }
+.split-row {
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 5px;
+}
+.split-row .split-client-sel, .split-row .split-task-sel {
+  flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a;
+  color: #f0f0f0; border-radius: 6px; padding: 6px 6px;
+  font-size: 11px; font-family: inherit; outline: none; min-width: 0;
+}
+.split-row .split-min {
+  width: 52px; background: #1a1a1a; border: 1px solid #2a2a2a;
+  color: #f0f0f0; border-radius: 6px; padding: 6px 6px;
+  font-size: 11px; font-family: inherit; outline: none; flex-shrink: 0;
+}
+.split-row select:focus, .split-row input:focus { border-color: #6c63ff; }
+.btn-remove-row {
+  background: none; border: none; color: #555;
+  font-size: 15px; cursor: pointer; padding: 0; flex-shrink: 0; line-height: 1;
+}
+.btn-remove-row:hover { color: #ff4757; }
+.btn-add-split {
+  background: none; border: 1px dashed #2a2a2a; color: #555;
+  border-radius: 6px; padding: 5px 10px; font-size: 11px;
+  cursor: pointer; width: 100%; margin-bottom: 8px; font-family: inherit;
+  transition: all 0.15s;
+}
+.btn-add-split:hover { border-color: #6c63ff; color: #6c63ff; }
+.split-status { text-align: right; margin-bottom: 6px; }
+.split-remaining { font-size: 11px; font-weight: 600; color: #666; }
+.btn-save-split {
+  background: #6c63ff; color: #fff; border: none;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  font-weight: 600; cursor: pointer;
+}
+.btn-save-split:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-save-split:not(:disabled):hover { background: #5a52e0; }
+.btn-cancel-split {
+  background: none; border: 1px solid #2a2a2a; color: #666;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  cursor: pointer; margin-left: auto;
+}
+.btn-cancel-split:hover { border-color: #444; color: #aaa; }
+.btn-split-edit {
+  background: none; border: 1px solid #2a2a2a; color: #666;
+  border-radius: 5px; padding: 5px 12px; font-size: 12px;
+  cursor: pointer;
+}
+.btn-split-edit:hover { border-color: #6c63ff; color: #6c63ff; }
 
 /* ── Dashboard link ── */
 .dashboard-link {

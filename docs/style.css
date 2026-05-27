@@ -55,6 +55,31 @@ body {
   font-size: 13px; font-family: inherit; outline: none; cursor: pointer;
 }
 .filter-group select:focus { border-color: var(--accent); }
+/* ── Multi-select dropdowns ── */
+.multi-select { position: relative; }
+.ms-trigger {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 6px; padding: 6px 10px;
+  font-size: 13px; font-family: inherit; cursor: pointer;
+  white-space: nowrap; transition: border-color 0.15s;
+}
+.ms-trigger:hover { border-color: var(--accent); }
+.ms-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 0;
+  min-width: 180px; max-height: 240px; overflow-y: auto;
+  z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.ms-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px; font-size: 13px; cursor: pointer;
+  color: var(--text); transition: background 0.1s;
+}
+.ms-item:hover { background: #222; }
+.ms-item input { accent-color: var(--accent); cursor: pointer; }
+.ms-item--all { border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 8px; font-weight: 600; }
+
 .btn-refresh {
   background: none; border: 1px solid var(--border);
   color: var(--muted); border-radius: 6px;
@@ -66,7 +91,7 @@ body {
 
 /* ── Cards ── */
 .cards {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 16px; margin: 24px 0;
 }
 .card {
@@ -90,6 +115,20 @@ body {
   font-size: 12px; font-weight: 600; text-transform: uppercase;
   letter-spacing: 0.6px; color: var(--muted); margin-bottom: 16px;
 }
+.chart-title-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.chart-title-row .chart-title { margin-bottom: 0; }
+.chart-toggles { display: flex; gap: 4px; }
+.chart-toggle {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  border-radius: 5px; padding: 3px 10px; font-size: 11px;
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.chart-toggle:hover { border-color: #444; color: #aaa; }
+.chart-toggle.active { border-color: var(--accent); color: var(--accent); }
 
 /* ── Table ── */
 .table-card {
@@ -136,9 +175,9 @@ tbody td.muted { color: var(--muted); }
 
 /* ── Responsive ── */
 @media (max-width: 800px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
+  .cards { grid-template-columns: repeat(3, 1fr); }
   .charts-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 500px) {
-  .cards { grid-template-columns: 1fr 1fr; }
+  .cards { grid-template-columns: 1fr; }
 }

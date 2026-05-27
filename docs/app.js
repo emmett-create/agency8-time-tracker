@@ -2,6 +2,36 @@
 
 let allEntries = [];
 let charts = {};
+let personChartMode = 'task';
+
+const TASK_COLORS = {
+  'Meetings (Ext)':          '#9c8fff',
+  'Meetings (Int)':          '#6c63ff',
+  'Sourcing/List Building':  '#ff6b9d',
+  'Strategy/Planning':       '#43e97b',
+  'Paid':                    '#ffd700',
+  'Client Comms':            '#4fc3f7',
+  'Creator Comms (DM)':      '#f06292',
+  'Creator Comms (Email)':   '#4db6ac',
+  'Reporting':               '#ff8a65',
+  'Shopify':                 '#ff7043',
+  'Spreadsheet Management':  '#fff176',
+  'Content Brief':           '#aed581',
+  'Outreach Copy':           '#f48fb1',
+  'ShopMy':                  '#ce93d8',
+  'TikTok Shop':             '#80cbc4',
+  'LTK':                     '#f7971e',
+  'Onboarding':              '#aed581',
+  'Offboarding':             '#4db6ac',
+  'Newsletters':             '#80deea',
+};
+
+const AUTO_COLORS = [
+  '#6c63ff','#ff6b9d','#43e97b','#f7971e','#4fc3f7',
+  '#f06292','#ff8a65','#ba68c8','#4db6ac','#fff176',
+  '#ff7043','#ce93d8','#80cbc4','#aed581','#f48fb1',
+  '#80deea','#ffcc80','#a5d6a7','#ef9a9a','#90caf9',
+];
 
 async function init() {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
@@ -10,19 +40,36 @@ async function init() {
   }
   document.getElementById('view-main').classList.remove('hidden');
 
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fil-from').value = today.slice(0, 7) + '-01';
+  document.getElementById('fil-to').value   = today;
+
   document.getElementById('btn-refresh').addEventListener('click', loadData);
-  document.getElementById('fil-period').addEventListener('change', render);
-  document.getElementById('fil-person').addEventListener('change', render);
-  document.getElementById('fil-client').addEventListener('change', render);
+  document.getElementById('fil-from').addEventListener('change', loadData);
+  document.getElementById('fil-to').addEventListener('change', loadData);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
 
+  document.querySelectorAll('.chart-toggle[data-chart="person"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.chart-toggle[data-chart="person"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      personChartMode = btn.dataset.mode;
+      render();
+    });
+  });
+
+  setupMultiSelectToggles();
   await loadData();
 }
 
 async function loadData() {
   try {
-    const resp = await fetch(
-      `${SUPABASE_URL}/rest/v1/time_entries?order=entry_date.desc,created_at.desc&limit=2000`,
+    const fromVal = document.getElementById('fil-from').value;
+    const toVal   = document.getElementById('fil-to').value;
+    let url = `${SUPABASE_URL}/rest/v1/time_entries?order=entry_date.desc,created_at.desc`;
+    if (fromVal) url += `&entry_date=gte.${fromVal}`;
+    if (toVal)   url += `&entry_date=lte.${toVal}`;
+    const resp = await fetch(url,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
     );
     if (!resp.ok) throw new Error(await resp.text());
@@ -37,63 +84,82 @@ async function loadData() {
 function populateFilters() {
   const people  = [...new Set(allEntries.map(e => e.employee_name))].sort();
   const clients = [...new Set(allEntries.map(e => e.client))].sort();
+  const tasks   = [...new Set(allEntries.map(e => e.task_type))].sort();
 
-  const personSel = document.getElementById('fil-person');
-  const clientSel = document.getElementById('fil-client');
+  buildMultiSelect('ms-person-list', 'ms-person-btn', people, 'Everyone');
+  buildMultiSelect('ms-client-list', 'ms-client-btn', clients, 'All Clients');
+  buildMultiSelect('ms-task-list',   'ms-task-btn',   tasks,   'All Tasks');
+}
 
-  const curPerson = personSel.value;
-  const curClient = clientSel.value;
+function buildMultiSelect(listId, btnId, items, allLabel) {
+  const list = document.getElementById(listId);
+  const btn  = document.getElementById(btnId);
 
-  personSel.innerHTML = '<option value="">Everyone</option>';
-  people.forEach(p => {
-    const opt = new Option(p, p);
-    if (p === curPerson) opt.selected = true;
-    personSel.appendChild(opt);
+  list.innerHTML = `
+    <label class="ms-item ms-item--all">
+      <input type="checkbox" class="ms-all-cb"> Select All
+    </label>
+  ` + items.map(item => `
+    <label class="ms-item">
+      <input type="checkbox" value="${item}"> ${item}
+    </label>
+  `).join('');
+
+  const allCb   = list.querySelector('.ms-all-cb');
+  const itemCbs = [...list.querySelectorAll('input[value]')];
+
+  allCb.addEventListener('change', () => {
+    itemCbs.forEach(cb => cb.checked = allCb.checked);
+    const checked = getSelected(listId);
+    btn.textContent = checked.length === 0 ? `${allLabel} ▾` : `${checked.length} selected ▾`;
+    render();
   });
 
-  clientSel.innerHTML = '<option value="">All Clients</option>';
-  clients.forEach(c => {
-    const opt = new Option(c, c);
-    if (c === curClient) opt.selected = true;
-    clientSel.appendChild(opt);
+  itemCbs.forEach(cb => {
+    cb.addEventListener('change', () => {
+      allCb.checked       = itemCbs.every(c => c.checked);
+      allCb.indeterminate = !allCb.checked && itemCbs.some(c => c.checked);
+      const checked = getSelected(listId);
+      btn.textContent = checked.length === 0 ? `${allLabel} ▾` : `${checked.length} selected ▾`;
+      render();
+    });
   });
 }
 
-function getDateRange(period) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+function setupMultiSelectToggles() {
+  document.querySelectorAll('.multi-select').forEach(wrapper => {
+    const btn  = wrapper.querySelector('.ms-trigger');
+    const list = wrapper.querySelector('.ms-dropdown');
 
-  if (period === 'today') {
-    return { from: today, to: new Date() };
-  }
-  if (period === 'week') {
-    const from = new Date(today);
-    from.setDate(today.getDate() - today.getDay()); // Sunday
-    return { from, to: new Date() };
-  }
-  if (period === 'month') {
-    const from = new Date(today.getFullYear(), today.getMonth(), 1);
-    return { from, to: new Date() };
-  }
-  if (period === 'last_month') {
-    const from = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const to   = new Date(today.getFullYear(), today.getMonth(), 0);
-    return { from, to };
-  }
-  return { from: new Date(0), to: new Date() };
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelectorAll('.ms-dropdown').forEach(d => {
+        if (d !== list) d.classList.add('hidden');
+      });
+      list.classList.toggle('hidden');
+    });
+
+    list.addEventListener('click', e => e.stopPropagation());
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.ms-dropdown').forEach(d => d.classList.add('hidden'));
+  });
+}
+
+function getSelected(listId) {
+  return [...document.getElementById(listId).querySelectorAll('input[value]:checked')].map(i => i.value);
 }
 
 function filterEntries() {
-  const period = document.getElementById('fil-period').value;
-  const person = document.getElementById('fil-person').value;
-  const client = document.getElementById('fil-client').value;
-  const { from, to } = getDateRange(period);
+  const people  = getSelected('ms-person-list');
+  const clients = getSelected('ms-client-list');
+  const tasks   = getSelected('ms-task-list');
 
   return allEntries.filter(e => {
-    const d = new Date(e.entry_date + 'T00:00:00');
-    if (d < from || d > to) return false;
-    if (person && e.employee_name !== person) return false;
-    if (client && e.client !== client) return false;
+    if (people.length  && !people.includes(e.employee_name)) return false;
+    if (clients.length && !clients.includes(e.client))       return false;
+    if (tasks.length   && !tasks.includes(e.task_type))      return false;
     return true;
   });
 }
@@ -108,81 +174,133 @@ function render() {
 function renderStats(entries) {
   const totalMins = entries.reduce((s, e) => s + e.duration_minutes, 0);
 
-  // Top client
   const byClient = groupSum(entries, 'client');
   const topClient = Object.entries(byClient).sort((a, b) => b[1] - a[1])[0];
 
-  // Top person
-  const byPerson = groupSum(entries, 'employee_name');
-  const topPerson = Object.entries(byPerson).sort((a, b) => b[1] - a[1])[0];
+  const byTask = groupSum(entries, 'task_type');
+  const topTask = Object.entries(byTask).sort((a, b) => b[1] - a[1])[0];
 
   document.getElementById('stat-total').textContent      = fmtHours(totalMins);
   document.getElementById('stat-top-client').textContent = topClient ? topClient[0] : '—';
-  document.getElementById('stat-top-person').textContent = topPerson ? topPerson[0] : '—';
-  document.getElementById('stat-entries').textContent    = entries.length;
+  document.getElementById('stat-top-task').textContent   = topTask ? topTask[0] : '—';
+}
+
+// ── Stacked chart helpers ──────────────────────────────────────────────────────
+
+function stackedByTask(entries, groupKey, sortByTotal) {
+  let groups = [...new Set(entries.map(e => e[groupKey]))];
+  if (sortByTotal) {
+    groups.sort((a, b) => {
+      const ta = entries.filter(e => e[groupKey] === a).reduce((s, e) => s + e.duration_minutes, 0);
+      const tb = entries.filter(e => e[groupKey] === b).reduce((s, e) => s + e.duration_minutes, 0);
+      return tb - ta;
+    });
+  } else {
+    groups.sort();
+  }
+
+  const tasks = Object.keys(TASK_COLORS).filter(t => entries.some(e => e.task_type === t));
+  entries.forEach(e => { if (!tasks.includes(e.task_type)) tasks.push(e.task_type); });
+
+  const datasets = tasks.map(task => ({
+    label: task,
+    data: groups.map(g =>
+      +(entries.filter(e => e[groupKey] === g && e.task_type === task)
+               .reduce((s, e) => s + e.duration_minutes, 0) / 60).toFixed(2)
+    ),
+    backgroundColor: TASK_COLORS[task] || '#aaa',
+  }));
+
+  return { groups, datasets };
+}
+
+function stackedByClient(entries, groupKey) {
+  let groups = [...new Set(entries.map(e => e[groupKey]))];
+  groups.sort((a, b) => {
+    const ta = entries.filter(e => e[groupKey] === a).reduce((s, e) => s + e.duration_minutes, 0);
+    const tb = entries.filter(e => e[groupKey] === b).reduce((s, e) => s + e.duration_minutes, 0);
+    return tb - ta;
+  });
+
+  const clients = [...new Set(entries.map(e => e.client))];
+
+  const datasets = clients.map((client, i) => ({
+    label: client,
+    data: groups.map(g =>
+      +(entries.filter(e => e[groupKey] === g && e.client === client)
+               .reduce((s, e) => s + e.duration_minutes, 0) / 60).toFixed(2)
+    ),
+    backgroundColor: AUTO_COLORS[i % AUTO_COLORS.length],
+  }));
+
+  return { groups, datasets };
+}
+
+function personTooltip(entries, groupKey, isDate) {
+  return ctx => {
+    const task  = ctx.dataset.label;
+    const label = ctx.label;
+    const relevant = entries.filter(e => {
+      const val = isDate ? formatDate(e[groupKey]) : e[groupKey];
+      return val === label && e.task_type === task;
+    });
+    const byPerson = {};
+    relevant.forEach(e => {
+      byPerson[e.employee_name] = (byPerson[e.employee_name] || 0) + e.duration_minutes;
+    });
+    const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
+    if (people.length <= 1) return ` ${task}: ${ctx.parsed.y}h`;
+    return [
+      ` ${task}: ${ctx.parsed.y}h`,
+      ...people.map(([p, m]) => `  ↳ ${p}: ${(m / 60).toFixed(2)}h`),
+    ];
+  };
 }
 
 function renderCharts(entries) {
-  // Destroy existing charts
   Object.values(charts).forEach(c => c.destroy());
   charts = {};
 
-  const COLORS = [
-    '#6c63ff','#ff6b9d','#43e97b','#f7971e','#4fc3f7',
-    '#ff8a65','#ba68c8','#4db6ac','#fff176','#f06292',
-    '#aed581','#ffb74d','#4dd0e1','#ce93d8','#80cbc4',
-  ];
-
-  // By client
-  const byClient = groupSum(entries, 'client');
-  const clientEntries = Object.entries(byClient).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  const { groups: clientGroups, datasets: clientDatasets } = stackedByTask(entries, 'client', true);
   charts.client = new Chart(document.getElementById('chart-client'), {
     type: 'bar',
-    data: {
-      labels: clientEntries.map(e => e[0]),
-      datasets: [{ data: clientEntries.map(e => +(e[1]/60).toFixed(1)), backgroundColor: COLORS }],
-    },
-    options: barOptions('Hours'),
+    data: { labels: clientGroups, datasets: clientDatasets },
+    options: stackedBarOptions(personTooltip(entries, 'client', false)),
   });
 
-  // By person
-  const byPerson = groupSum(entries, 'employee_name');
-  const personEntries = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
+  let personGroups, personDatasets, personTipFn;
+  if (personChartMode === 'task') {
+    ({ groups: personGroups, datasets: personDatasets } = stackedByTask(entries, 'employee_name', true));
+    personTipFn = ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`;
+  } else {
+    ({ groups: personGroups, datasets: personDatasets } = stackedByClient(entries, 'employee_name'));
+    personTipFn = ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`;
+  }
   charts.person = new Chart(document.getElementById('chart-person'), {
     type: 'bar',
-    data: {
-      labels: personEntries.map(e => e[0]),
-      datasets: [{ data: personEntries.map(e => +(e[1]/60).toFixed(1)), backgroundColor: COLORS }],
-    },
-    options: barOptions('Hours'),
+    data: { labels: personGroups, datasets: personDatasets },
+    options: stackedBarOptions(personTipFn),
   });
 
-  // By task
   const byTask = groupSum(entries, 'task_type');
   const taskEntries = Object.entries(byTask).sort((a, b) => b[1] - a[1]);
   charts.task = new Chart(document.getElementById('chart-task'), {
     type: 'doughnut',
     data: {
       labels: taskEntries.map(e => e[0]),
-      datasets: [{ data: taskEntries.map(e => +(e[1]/60).toFixed(1)), backgroundColor: COLORS }],
-    },
-    options: donutOptions(),
-  });
-
-  // Daily hours
-  const byDay = groupSum(entries, 'entry_date');
-  const dayEntries = Object.entries(byDay).sort((a, b) => a[0].localeCompare(b[0]));
-  charts.daily = new Chart(document.getElementById('chart-daily'), {
-    type: 'bar',
-    data: {
-      labels: dayEntries.map(e => formatDate(e[0])),
       datasets: [{
-        data: dayEntries.map(e => +(e[1]/60).toFixed(1)),
-        backgroundColor: '#6c63ff',
-        borderRadius: 4,
+        data: taskEntries.map(e => +(e[1] / 60).toFixed(2)),
+        backgroundColor: taskEntries.map(e => TASK_COLORS[e[0]] || '#aaa'),
       }],
     },
-    options: barOptions('Hours'),
+    options: donutOptions(entries),
+  });
+
+  const { groups: dayGroups, datasets: dayDatasets } = stackedByTask(entries, 'entry_date', false);
+  charts.daily = new Chart(document.getElementById('chart-daily'), {
+    type: 'bar',
+    data: { labels: dayGroups.map(formatDate), datasets: dayDatasets },
+    options: stackedBarOptions(personTooltip(entries, 'entry_date', true), 10),
   });
 }
 
@@ -216,21 +334,24 @@ function exportCSV() {
 
 // ── Chart option helpers ───────────────────────────────────────────────────────
 
-function barOptions(yLabel) {
+function stackedBarOptions(tooltipLabel, xTicksLimit) {
   return {
     responsive: true,
     plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}h` } },
+      legend: {
+        position: 'bottom',
+        labels: { color: '#aaa', font: { size: 11 }, padding: 10, boxWidth: 12 },
+      },
+      tooltip: { callbacks: { label: tooltipLabel } },
     },
     scales: {
-      x: { ticks: { color: '#666', font: { size: 11 } }, grid: { color: '#1a1a1a' } },
-      y: { ticks: { color: '#666', font: { size: 11 } }, grid: { color: '#1a1a1a' }, title: { display: false } },
+      x: { stacked: true, ticks: { color: '#666', font: { size: 11 }, ...(xTicksLimit ? { maxTicksLimit: xTicksLimit } : {}) }, grid: { color: '#1a1a1a' } },
+      y: { stacked: true, ticks: { color: '#666', font: { size: 11 } }, grid: { color: '#1a1a1a' } },
     },
   };
 }
 
-function donutOptions() {
+function donutOptions(entries) {
   return {
     responsive: true,
     plugins: {
@@ -238,7 +359,23 @@ function donutOptions() {
         position: 'right',
         labels: { color: '#aaa', font: { size: 12 }, padding: 12, boxWidth: 14 },
       },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}h` } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const task = ctx.label;
+            const byPerson = {};
+            entries.filter(e => e.task_type === task).forEach(e => {
+              byPerson[e.employee_name] = (byPerson[e.employee_name] || 0) + e.duration_minutes;
+            });
+            const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
+            if (people.length <= 1) return ` ${task}: ${ctx.parsed}h`;
+            return [
+              ` ${task}: ${ctx.parsed}h`,
+              ...people.map(([p, m]) => `  ↳ ${p}: ${(m / 60).toFixed(2)}h`),
+            ];
+          },
+        },
+      },
     },
   };
 }
@@ -253,8 +390,7 @@ function groupSum(entries, key) {
 }
 
 function fmtHours(mins) {
-  const h = (mins / 60).toFixed(1);
-  return `${h}h`;
+  return `${(mins / 60).toFixed(1)}h`;
 }
 
 function fmtMinutes(mins) {

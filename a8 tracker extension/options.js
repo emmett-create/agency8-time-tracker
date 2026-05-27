@@ -1,14 +1,17 @@
 // Agency 8 — Time Tracker options.js
 
 const DEFAULT_CLIENTS = [
-  'BORNTOSTANDOUT','Brodo','Camp','dpHue','EvolveTogether','Facile',
-  'Feals','Fellow','Golden Age Fat','Ilia','Lenox and Sixteenth','MadeGood',
-  'Magna','Masa','Merit','Momofuku','MPH','Nette','Roz','Skinfix','Snif',
-  'Squigs','SYS','Timebeam','TodayTix','Tushy','Vandy',
+  'BORNTOSTANDOUT','Brodo','Counter','Emma Relief','EvolveTogether',
+  'Feals','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',
+  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',
+  'Nette','Pattern','Raazi','Roz','Snif','Squigs','Stardust','SYS','Timebeam','TodayTix','Tushy',
 ];
 
 const DEFAULT_TASKS = [
-  'Meetings','Sourcing','Strategy','Outreach','Reporting','Email','Admin',
+  'Meetings (Ext)','Meetings (Int)','Sourcing/List Building','Strategy/Planning',
+  'Paid','Client Comms','Creator Comms (DM)','Creator Comms (Email)',
+  'Reporting','Shopify','Spreadsheet Management','Content Brief',
+  'Outreach Copy','ShopMy','TikTok Shop','LTK','Onboarding','Offboarding','Newsletters',
 ];
 
 async function init() {
