@@ -1,18 +1,19 @@
-{
-  "manifest_version": 3,
-  "name": "Agency 8 — Time Tracker",
-  "version": "1.0",
-  "description": "Track time by client and task for Agency 8",
-  "permissions": ["storage"],
-  "host_permissions": [
-    "https://*.supabase.co/*"
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
-  },
-  "options_page": "options.html"
-}
+{                                                                                                                                                                                                         
+    "manifest_version": 3,                                                                                                                                                                                  
+    "name": "Agency 8 — Time Tracker",                                                                                                                                                                      
+    "version": "1.0",                                                                                                                                                                                       
+    "description": "Track time by client and task for Agency 8",
+    "permissions": ["storage", "alarms", "notifications"],                                                                                                                                                  
+    "background": { "service_worker": "background.js" },    
+    "host_permissions": [
+      "https://*.supabase.co/*"                                                                                                                                                                             
+    ],
+    "action": {                                                                                                                                                                                             
+      "default_popup": "popup.html",                        
+      "default_icon": {                   
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"                                                                                                                                                                          
+      }
+    },                                                                                                                                                                                                      
+    "options_page": "options.html"                          
+  }

@@ -1,64 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Agency 8 Time — Settings</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="options-body">
+<!DOCTYPE html>                                                                                                                                                                                           
+  <html lang="en">                                                                                                                                                                                          
+  <head>                                      
+    <meta charset="utf-8">                                                                                                                                                                                  
+    <title>Agency 8 Time — Settings</title>                 
+    <link rel="stylesheet" href="style.css">                                                                                                                                                                
+  </head>                                                                                                                                                                                                   
+  <body class="options-body">                                                                                                                                                                               
+                                                                                                                                                                                                            
+    <div class="options-title">Agency 8 Time — Settings</div>                                                                                                                                               
+                                          
+    <div class="options-section">
+      <h2>Your Info</h2>                                                                                                                                                                                    
+      <div class="options-field">
+        <label>Your Name</label>                                                                                                                                                                            
+        <input type="text" id="inp-name" placeholder="e.g. Emmett">
+      </div>                                  
+    </div>                                
 
-  <div class="options-title">Agency 8 Time — Settings</div>
+    <div class="options-section">                                                                                                                                                                           
+      <h2>Supabase</h2>
+      <div class="options-field">                                                                                                                                                                           
+        <label>Supabase Project URL</label>                 
+        <input type="text" id="inp-url" placeholder="https://xxxx.supabase.co">
+      </div>
+      <div class="options-field">                                                                                                                                                                           
+        <label>Supabase Anon Key</label>
+        <input type="text" id="inp-key" placeholder="eyJ...">                                                                                                                                               
+        <div class="options-hint">Found in Supabase → Project Settings → API</div>
+      </div>
+    </div>                                                                                                                                                                                                  
+                                              
+    <div class="options-section">                                                                                                                                                                           
+      <h2>Dashboard URL</h2>                                
+      <div class="options-field">                                                                                                                                                                           
+        <label>Web App URL</label>
+        <input type="text" id="inp-dashboard" placeholder="https://emmett-create.github.io/agency8-time-tracker">                                                                                           
+      </div>                                                
+    </div>                                
 
-  <div class="options-section">
-    <h2>Your Info</h2>
-    <div class="options-field">
-      <label>Your Name</label>
-      <input type="text" id="inp-name" placeholder="e.g. Emmett">
+    <div class="options-section">                                                                                                                                                                           
+      <h2>Clients</h2>
+      <div class="options-field">                                                                                                                                                                           
+        <label>Client Names (one per line)</label>          
+        <textarea id="inp-clients" rows="12"></textarea>
+      </div>                              
     </div>
-  </div>
+                                                                                                                                                                                                            
+    <div class="options-section">
+      <h2>Task Types</h2>                                                                                                                                                                                   
+      <div class="options-field">                           
+        <label>Task Types (one per line)</label>
+        <textarea id="inp-tasks" rows="8"></textarea>
+      </div>
+    </div>                                                                                                                                                                                                  
+   
+    <div style="display:flex;align-items:center;">                                                                                                                                                          
+      <button class="btn-save" id="btn-save">Save Settings</button>
+      <span class="save-confirm" id="save-confirm">✓ Saved</span>
+    </div>                                
 
-  <div class="options-section">
-    <h2>Supabase</h2>
-    <div class="options-field">
-      <label>Supabase Project URL</label>
-      <input type="text" id="inp-url" placeholder="https://xxxx.supabase.co">
-    </div>
-    <div class="options-field">
-      <label>Supabase Anon Key</label>
-      <input type="text" id="inp-key" placeholder="eyJ...">
-      <div class="options-hint">Found in Supabase → Project Settings → API</div>
-    </div>
-  </div>
-
-  <div class="options-section">
-    <h2>Dashboard URL</h2>
-    <div class="options-field">
-      <label>Web App URL</label>
-      <input type="text" id="inp-dashboard" placeholder="https://emmett-create.github.io/agency8-time-tracker">
-    </div>
-  </div>
-
-  <div class="options-section">
-    <h2>Clients</h2>
-    <div class="options-field">
-      <label>Client Names (one per line)</label>
-      <textarea id="inp-clients" rows="12"></textarea>
-    </div>
-  </div>
-
-  <div class="options-section">
-    <h2>Task Types</h2>
-    <div class="options-field">
-      <label>Task Types (one per line)</label>
-      <textarea id="inp-tasks" rows="8"></textarea>
-    </div>
-  </div>
-
-  <div style="display:flex;align-items:center;">
-    <button class="btn-save" id="btn-save">Save Settings</button>
-    <span class="save-confirm" id="save-confirm">✓ Saved</span>
-  </div>
-
-  <script src="options.js"></script>
-</body>
-</html>
+    <script src="options.js"></script>                                                                                                                                                                      
+  </body>
+  </html>
