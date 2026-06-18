@@ -2,7 +2,7 @@
 
 const DEFAULT_CLIENTS = [
   'BORNTOSTANDOUT','Brodo','Emma Relief','EvolveTogether',
-  'Feals','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',
+  'Feals','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
   'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',
   'Nette','Roz','Snif','Squigs','SYS','Timebeam','TodayTix','Tushy',
 ];

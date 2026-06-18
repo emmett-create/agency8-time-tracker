@@ -1,8 +1,8 @@
 // Agency 8 — Time Tracker popup.js         
                                                                                                                                                                                                             
   const DEFAULT_CLIENTS = [                                 
-    'BORNTOSTANDOUT','Brodo','Emma Relief','EvolveTogether',                                                                                                                                                
-    'Feals','Harper Wilde','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',                                                                                                             
+    'Allies of Skin','BORNTOSTANDOUT','Brodo','Emma Relief','EvolveTogether',                                                                                                                                                
+    'Feals','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',                                                                                                             
     'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',                                                                                                                                          
     'Nette','Roz','Snif','Squigs','SYS','Timebeam','TodayTix','Tushy',                                                                                                                                      
   ];                                                                                                                                                                                                        
