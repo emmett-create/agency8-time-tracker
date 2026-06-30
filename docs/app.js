@@ -82,7 +82,9 @@ async function loadData() {
 }
 
 function populateFilters() {
-  const people  = [...new Set(allEntries.map(e => e.employee_name))].sort();
+  const HIDDEN_PEOPLE = ["Melia"];
+  const people  = [...new Set(allEntries.map(e => e.employee_name))]
+    .filter(n => !HIDDEN_PEOPLE.includes(n)).sort();
   const clients = [...new Set(allEntries.map(e => e.client))].sort();
   const tasks   = [...new Set(allEntries.map(e => e.task_type))].sort();
 
