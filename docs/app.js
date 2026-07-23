@@ -299,10 +299,30 @@ function renderCharts(entries) {
   });
 
   const { groups: dayGroups, datasets: dayDatasets } = stackedByTask(entries, 'entry_date', false);
+  const dailyTotalPlugin = {
+    id: 'dailyTotals',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const lastMeta = chart.getDatasetMeta(chart.data.datasets.length - 1);
+      lastMeta.data.forEach((bar, i) => {
+        const total = chart.data.datasets.reduce((s, ds) => s + (ds.data[i] || 0), 0);
+        if (!total) return;
+        ctx.save();
+        ctx.font = 'bold 11px -apple-system, sans-serif';
+        ctx.fillStyle = '#cccccc';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(total.toFixed(1) + 'h', bar.x, bar.y - 4);
+        ctx.restore();
+      });
+    }
+  };
+
   charts.daily = new Chart(document.getElementById('chart-daily'), {
     type: 'bar',
     data: { labels: dayGroups.map(formatDate), datasets: dayDatasets },
     options: stackedBarOptions(personTooltip(entries, 'entry_date', true), 10),
+    plugins: [dailyTotalPlugin],
   });
 }
 

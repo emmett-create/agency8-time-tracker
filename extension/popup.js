@@ -1,8 +1,8 @@
 // Agency 8 — Time Tracker popup.js         
                                                                                                                                                                                                             
   const DEFAULT_CLIENTS = [                                 
-    'Allies of Skin','BORNTOSTANDOUT','Brodo','Dr. Squatch','Emma Relief','EvolveTogether',
-    'Feals','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
+    'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
+    'Feals','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
     'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',
     'Nette','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Timebeam','TodayTix','Tushy',                                                                                                                                      
   ];                                                                                                                                                                                                        
@@ -45,6 +45,15 @@
     document.getElementById('btn-timer').addEventListener('click', handleTimer);
   }                                                                                                                                                                                                         
                                                             
+  function mergeDefaults(stored, defaults) {
+    const lower = new Set(stored.map(c => c.toLowerCase()));
+    const merged = [...stored];
+    for (const c of defaults) {
+      if (!lower.has(c.toLowerCase())) merged.push(c);
+    }
+    return merged.sort((a, b) => a.localeCompare(b));
+  }
+
   async function loadSettings() {                                                                                                                                                                           
     const s = await chrome.storage.local.get([
       'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks',                                                                                                                                  
@@ -54,8 +63,8 @@
       supabaseUrl:  s.supabaseUrl || '',                                                                                                                                                                    
       supabaseKey:  s.supabaseKey || '',
       dashboardUrl: s.dashboardUrl || '',                                                                                                                                                                   
-      clients:      s.clients || DEFAULT_CLIENTS,           
-      tasks:        s.tasks || DEFAULT_TASKS,
+      clients:      s.clients ? mergeDefaults(s.clients, DEFAULT_CLIENTS) : DEFAULT_CLIENTS,
+      tasks:        s.tasks   ? mergeDefaults(s.tasks,   DEFAULT_TASKS)   : DEFAULT_TASKS,
     };                                                                                                                                                                                                      
   }
                                                                                                                                                                                                             
