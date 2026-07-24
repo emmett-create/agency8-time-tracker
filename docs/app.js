@@ -4,26 +4,6 @@ let allEntries = [];
 let charts = {};
 let personChartMode = 'client'; // always by client now
 
-// Reusable plugin: draw total on top of every stacked bar
-const totalLabelPlugin = {
-  id: 'totalLabels',
-  afterDatasetsDraw(chart) {
-    const { ctx } = chart;
-    const lastMeta = chart.getDatasetMeta(chart.data.datasets.length - 1);
-    lastMeta.data.forEach((bar, i) => {
-      const total = chart.data.datasets.reduce((s, ds) => s + (ds.data[i] || 0), 0);
-      if (!total) return;
-      ctx.save();
-      ctx.font = 'bold 11px -apple-system, sans-serif';
-      ctx.fillStyle = '#cccccc';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText(total.toFixed(1) + 'h', bar.x, bar.y - 4);
-      ctx.restore();
-    });
-  }
-};
-
 const TASK_COLORS = {
   'Meetings (Ext)':          '#9c8fff',
   'Meetings (Int)':          '#6c63ff',
@@ -317,7 +297,6 @@ function renderCharts(entries) {
     type: 'bar',
     data: { labels: clientGroups, datasets: clientDatasets },
     options: stackedBarOptions(personTooltip(entries, 'client', false)),
-    plugins: [totalLabelPlugin],
   });
 
   // Hours by Person — always by client (no task toggle)
@@ -326,16 +305,14 @@ function renderCharts(entries) {
     type: 'bar',
     data: { labels: personGroups, datasets: personDatasets },
     options: stackedBarOptions(ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`),
-    plugins: [totalLabelPlugin],
   });
 
-  // Hours by Client (bottom-left) — stacked by person, sorted by total
-  const { groups: taskGroups, datasets: taskDatasets } = stackedByPerson(entries, 'client', true);
+  // Client Share (bottom-left) — pie of total hours per client
+  const { labels: pieLabels, data: pieData, colors: pieColors } = pieByClient(entries);
   charts.task = new Chart(document.getElementById('chart-task'), {
-    type: 'bar',
-    data: { labels: taskGroups, datasets: taskDatasets },
-    options: stackedBarOptions(personTooltip(entries, 'client', false)),
-    plugins: [totalLabelPlugin],
+    type: 'doughnut',
+    data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors }] },
+    options: donutOptions(entries),
   });
 
   // Daily Hours — stacked by client, tooltip shows client → person breakdown
@@ -344,8 +321,27 @@ function renderCharts(entries) {
     type: 'bar',
     data: { labels: dayGroups.map(formatDate), datasets: dayDatasets },
     options: stackedBarOptions(clientPersonTooltip(entries, 'entry_date'), 10),
-    plugins: [totalLabelPlugin],
   });
+}
+
+// Client totals for the pie chart, colored to match the same client's color
+// in the Hours by Person / Daily Hours charts (both use stackedByClient's
+// first-seen client ordering into AUTO_COLORS).
+function pieByClient(entries) {
+  const clients = [...new Set(entries.map(e => e.client))];
+  const order = clients
+    .map((c, i) => ({
+      client: c,
+      colorIdx: i,
+      total: entries.filter(e => e.client === c).reduce((s, e) => s + e.duration_minutes, 0),
+    }))
+    .filter(o => o.total > 0)
+    .sort((a, b) => b.total - a.total);
+  return {
+    labels: order.map(o => o.client),
+    data: order.map(o => +(o.total / 60).toFixed(2)),
+    colors: order.map(o => AUTO_COLORS[o.colorIdx % AUTO_COLORS.length]),
+  };
 }
 
 function renderTable(entries) {
@@ -386,7 +382,16 @@ function stackedBarOptions(tooltipLabel, xTicksLimit) {
         position: 'bottom',
         labels: { color: '#aaa', font: { size: 11 }, padding: 10, boxWidth: 12 },
       },
-      tooltip: { callbacks: { label: tooltipLabel } },
+      tooltip: {
+        callbacks: {
+          label: tooltipLabel,
+          footer: items => {
+            const idx = items[0].dataIndex;
+            const total = items[0].chart.data.datasets.reduce((s, ds) => s + (ds.data[idx] || 0), 0);
+            return `Total: ${total.toFixed(1)}h`;
+          },
+        },
+      },
     },
     scales: {
       x: { stacked: true, ticks: { color: '#666', font: { size: 11 }, ...(xTicksLimit ? { maxTicksLimit: xTicksLimit } : {}) }, grid: { color: '#1a1a1a' } },
@@ -406,15 +411,15 @@ function donutOptions(entries) {
       tooltip: {
         callbacks: {
           label: ctx => {
-            const task = ctx.label;
+            const client = ctx.label;
             const byPerson = {};
-            entries.filter(e => e.task_type === task).forEach(e => {
+            entries.filter(e => e.client === client).forEach(e => {
               byPerson[e.employee_name] = (byPerson[e.employee_name] || 0) + e.duration_minutes;
             });
             const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
-            if (people.length <= 1) return ` ${task}: ${ctx.parsed}h`;
+            if (people.length <= 1) return ` ${client}: ${ctx.parsed}h`;
             return [
-              ` ${task}: ${ctx.parsed}h`,
+              ` ${client}: ${ctx.parsed}h`,
               ...people.map(([p, m]) => `  ↳ ${p}: ${(m / 60).toFixed(2)}h`),
             ];
           },
