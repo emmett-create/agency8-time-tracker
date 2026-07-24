@@ -2,7 +2,27 @@
 
 let allEntries = [];
 let charts = {};
-let personChartMode = 'task';
+let personChartMode = 'client'; // always by client now
+
+// Reusable plugin: draw total on top of every stacked bar
+const totalLabelPlugin = {
+  id: 'totalLabels',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    const lastMeta = chart.getDatasetMeta(chart.data.datasets.length - 1);
+    lastMeta.data.forEach((bar, i) => {
+      const total = chart.data.datasets.reduce((s, ds) => s + (ds.data[i] || 0), 0);
+      if (!total) return;
+      ctx.save();
+      ctx.font = 'bold 11px -apple-system, sans-serif';
+      ctx.fillStyle = '#cccccc';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(total.toFixed(1) + 'h', bar.x, bar.y - 4);
+      ctx.restore();
+    });
+  }
+};
 
 const TASK_COLORS = {
   'Meetings (Ext)':          '#9c8fff',
@@ -238,91 +258,93 @@ function stackedByClient(entries, groupKey) {
   return { groups, datasets };
 }
 
+// Tooltip: stacked by person — shows "Person: Xh" with no task breakdown
 function personTooltip(entries, groupKey, isDate) {
   return ctx => {
-    const task  = ctx.dataset.label;
-    const label = ctx.label;
-    const relevant = entries.filter(e => {
-      const val = isDate ? formatDate(e[groupKey]) : e[groupKey];
-      return val === label && e.task_type === task;
-    });
+    const person = ctx.dataset.label;
+    return ` ${person}: ${ctx.parsed.y}h`;
+  };
+}
+
+// Tooltip for daily chart: stacked by client, shows client → person breakdown
+function clientPersonTooltip(entries, groupKey) {
+  return ctx => {
+    const client = ctx.dataset.label;
+    const label  = ctx.label; // formatted date string
+    const relevant = entries.filter(e => formatDate(e[groupKey]) === label && e.client === client);
     const byPerson = {};
     relevant.forEach(e => {
       byPerson[e.employee_name] = (byPerson[e.employee_name] || 0) + e.duration_minutes;
     });
     const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
-    if (people.length <= 1) return ` ${task}: ${ctx.parsed.y}h`;
+    if (!people.length) return ` ${client}: ${ctx.parsed.y}h`;
     return [
-      ` ${task}: ${ctx.parsed.y}h`,
+      ` ${client}: ${ctx.parsed.y}h`,
       ...people.map(([p, m]) => `  ↳ ${p}: ${(m / 60).toFixed(2)}h`),
     ];
   };
+}
+
+// Stack by person within each group (for Hours by Client chart)
+function stackedByPerson(entries, groupKey, sortByTotal) {
+  let groups = [...new Set(entries.map(e => e[groupKey]))];
+  if (sortByTotal) {
+    groups.sort((a, b) => {
+      const ta = entries.filter(e => e[groupKey] === a).reduce((s, e) => s + e.duration_minutes, 0);
+      const tb = entries.filter(e => e[groupKey] === b).reduce((s, e) => s + e.duration_minutes, 0);
+      return tb - ta;
+    });
+  } else groups.sort();
+  const people = [...new Set(entries.map(e => e.employee_name))];
+  const datasets = people.map((person, i) => ({
+    label: person,
+    data: groups.map(g =>
+      +(entries.filter(e => e[groupKey] === g && e.employee_name === person)
+               .reduce((s, e) => s + e.duration_minutes, 0) / 60).toFixed(2)
+    ),
+    backgroundColor: AUTO_COLORS[i % AUTO_COLORS.length],
+  }));
+  return { groups, datasets };
 }
 
 function renderCharts(entries) {
   Object.values(charts).forEach(c => c.destroy());
   charts = {};
 
-  const { groups: clientGroups, datasets: clientDatasets } = stackedByTask(entries, 'client', true);
+  // Hours by Client — stacked by person
+  const { groups: clientGroups, datasets: clientDatasets } = stackedByPerson(entries, 'client', true);
   charts.client = new Chart(document.getElementById('chart-client'), {
     type: 'bar',
     data: { labels: clientGroups, datasets: clientDatasets },
     options: stackedBarOptions(personTooltip(entries, 'client', false)),
+    plugins: [totalLabelPlugin],
   });
 
-  let personGroups, personDatasets, personTipFn;
-  if (personChartMode === 'task') {
-    ({ groups: personGroups, datasets: personDatasets } = stackedByTask(entries, 'employee_name', true));
-    personTipFn = ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`;
-  } else {
-    ({ groups: personGroups, datasets: personDatasets } = stackedByClient(entries, 'employee_name'));
-    personTipFn = ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`;
-  }
+  // Hours by Person — always by client (no task toggle)
+  const { groups: personGroups, datasets: personDatasets } = stackedByClient(entries, 'employee_name');
   charts.person = new Chart(document.getElementById('chart-person'), {
     type: 'bar',
     data: { labels: personGroups, datasets: personDatasets },
-    options: stackedBarOptions(personTipFn),
+    options: stackedBarOptions(ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}h`),
+    plugins: [totalLabelPlugin],
   });
 
-  const byTask = groupSum(entries, 'task_type');
-  const taskEntries = Object.entries(byTask).sort((a, b) => b[1] - a[1]);
+  // Hours by Client (bottom-left) — stacked by person, sorted by total
+  const { groups: taskGroups, datasets: taskDatasets } = stackedByPerson(entries, 'client', true);
   charts.task = new Chart(document.getElementById('chart-task'), {
-    type: 'doughnut',
-    data: {
-      labels: taskEntries.map(e => e[0]),
-      datasets: [{
-        data: taskEntries.map(e => +(e[1] / 60).toFixed(2)),
-        backgroundColor: taskEntries.map(e => TASK_COLORS[e[0]] || '#aaa'),
-      }],
-    },
-    options: donutOptions(entries),
+    type: 'bar',
+    data: { labels: taskGroups, datasets: taskDatasets },
+    options: stackedBarOptions(personTooltip(entries, 'client', false)),
+    plugins: [totalLabelPlugin],
   });
 
-  const { groups: dayGroups, datasets: dayDatasets } = stackedByTask(entries, 'entry_date', false);
-  const dailyTotalPlugin = {
-    id: 'dailyTotals',
-    afterDatasetsDraw(chart) {
-      const { ctx } = chart;
-      const lastMeta = chart.getDatasetMeta(chart.data.datasets.length - 1);
-      lastMeta.data.forEach((bar, i) => {
-        const total = chart.data.datasets.reduce((s, ds) => s + (ds.data[i] || 0), 0);
-        if (!total) return;
-        ctx.save();
-        ctx.font = 'bold 11px -apple-system, sans-serif';
-        ctx.fillStyle = '#cccccc';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(total.toFixed(1) + 'h', bar.x, bar.y - 4);
-        ctx.restore();
-      });
-    }
-  };
-
+  // Daily Hours — stacked by client, tooltip shows client → person breakdown
+  const { groups: dayGroups, datasets: dayDatasets } = stackedByClient(entries, 'entry_date');
   charts.daily = new Chart(document.getElementById('chart-daily'), {
     type: 'bar',
     data: { labels: dayGroups.map(formatDate), datasets: dayDatasets },
-    options: stackedBarOptions(personTooltip(entries, 'entry_date', true), 10),
-    plugins: [dailyTotalPlugin],
+    options: stackedBarOptions(clientPersonTooltip(entries, 'entry_date'), 10),
+    plugins: [totalLabelPlugin],
   });
 }
 

@@ -2,9 +2,9 @@
                                                                                                                                                                                                             
   const DEFAULT_CLIENTS = [                                 
     'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
-    'Feals','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
-    'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',
-    'Nette','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Timebeam','TodayTix','Tushy',                                                                                                                                      
+    'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
+    'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette',
+    'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Timebeam','TodayTix','Tushy',                                                                                                                                      
   ];                                                                                                                                                                                                        
                                                                                                                                                                                                             
   const DEFAULT_TASKS = [                                                                                                                                                                                   
