@@ -179,12 +179,8 @@ function renderStats(entries) {
   const byClient = groupSum(entries, 'client');
   const topClient = Object.entries(byClient).sort((a, b) => b[1] - a[1])[0];
 
-  const byTask = groupSum(entries, 'task_type');
-  const topTask = Object.entries(byTask).sort((a, b) => b[1] - a[1])[0];
-
   document.getElementById('stat-total').textContent      = fmtHours(totalMins);
   document.getElementById('stat-top-client').textContent = topClient ? topClient[0] : '—';
-  document.getElementById('stat-top-task').textContent   = topTask ? topTask[0] : '—';
 }
 
 // ── Stacked chart helpers ──────────────────────────────────────────────────────

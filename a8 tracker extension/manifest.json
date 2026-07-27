@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Agency 8 — Time Tracker",
   "version": "1.6",
-  "description": "Track time by client and task for Agency 8",
+  "description": "Track time by client for Agency 8",
   "permissions": ["storage", "alarms", "notifications", "offscreen"],
   "background": { "service_worker": "background.js" },
   "host_permissions": [
