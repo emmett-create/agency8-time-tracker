@@ -1,11 +1,20 @@
 // Agency 8 — Time Tracker options.js
 
 const DEFAULT_CLIENTS = [
-  'BORNTOSTANDOUT','Brodo','Counter','Emma Relief','EvolveTogether',
-  'Feals','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kind Patches','Lenox and Sixteenth',
-  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku',
-  'Nette','Pattern','Raazi','Roz','Snif','Squigs','Stardust','SYS','Timebeam','TodayTix','Tushy',
+  'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
+  'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
+  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette',
+  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Timebeam','TodayTix','Tushy',
 ];
+
+function mergeDefaults(stored, defaults) {
+  const lower = new Set(stored.map(c => c.toLowerCase()));
+  const merged = [...stored];
+  for (const c of defaults) {
+    if (!lower.has(c.toLowerCase())) merged.push(c);
+  }
+  return merged.sort((a, b) => a.localeCompare(b));
+}
 
 async function init() {
   const s = await chrome.storage.local.get([
@@ -16,7 +25,7 @@ async function init() {
   document.getElementById('inp-url').value       = s.supabaseUrl || '';
   document.getElementById('inp-key').value       = s.supabaseKey || '';
   document.getElementById('inp-dashboard').value = s.dashboardUrl || '';
-  document.getElementById('inp-clients').value   = (s.clients || DEFAULT_CLIENTS).join('\n');
+  document.getElementById('inp-clients').value   = (s.clients ? mergeDefaults(s.clients, DEFAULT_CLIENTS) : DEFAULT_CLIENTS).join('\n');
 
   document.getElementById('btn-save').addEventListener('click', save);
 }
