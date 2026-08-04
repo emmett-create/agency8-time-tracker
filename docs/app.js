@@ -48,6 +48,7 @@ async function init() {
   document.getElementById('fil-from').addEventListener('change', loadData);
   document.getElementById('fil-to').addEventListener('change', loadData);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
+  document.getElementById('btn-export-person-client').addEventListener('click', exportPersonClientCSV);
 
   document.querySelectorAll('.chart-toggle[data-chart="person"]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -365,6 +366,37 @@ function exportCSV() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `agency8-time-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+function exportPersonClientCSV() {
+  const entries = filterEntries();
+  const people  = [...new Set(entries.map(e => e.employee_name))].sort();
+  const clients = [...new Set(entries.map(e => e.client))].sort();
+
+  const hoursFor = (person, client) =>
+    +(entries.filter(e => e.employee_name === person && e.client === client)
+             .reduce((s, e) => s + e.duration_minutes, 0) / 60).toFixed(2);
+
+  const rows = [
+    ['Person', ...clients, 'Total'],
+    ...people.map(p => {
+      const vals = clients.map(c => hoursFor(p, c));
+      const total = +vals.reduce((s, v) => s + v, 0).toFixed(2);
+      return [p, ...vals, total];
+    }),
+  ];
+  const totalsRow = ['Total', ...clients.map(c =>
+    +people.reduce((s, p) => s + hoursFor(p, c), 0).toFixed(2)
+  )];
+  totalsRow.push(+totalsRow.slice(1).reduce((s, v) => s + v, 0).toFixed(2));
+  rows.push(totalsRow);
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `agency8-hours-by-person-client-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
 
