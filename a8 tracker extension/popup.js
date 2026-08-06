@@ -2,9 +2,10 @@
 
 const DEFAULT_CLIENTS = [
   'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
-  'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Internal','Kalshi','Kind Patches','Lenox and Sixteenth',
-  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette',
-  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Timebeam','TodayTix','Tushy',
+  'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
+  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette','Oura',
+  'Pattern','Raazi Tea','Reale Actives','Reviews / Personal Development','Roz','Snif','Squigs','Stardust','SYS',
+  'Tein','The Absorption Company','Timebeam','TodayTix','Tushy',
 ];
 
 
@@ -185,7 +186,7 @@ async function submitEntry(entry) {
 
 function setupDayTabs() {
   const today = new Date();
-  const days = [0, 1, 2].map(offset => {
+  const days = [0, 1, 2, 3, 4, 5, 6].map(offset => {
     const d = new Date(today);
     d.setDate(today.getDate() - offset);
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
