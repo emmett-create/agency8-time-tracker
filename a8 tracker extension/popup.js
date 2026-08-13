@@ -2,10 +2,10 @@
 
 const DEFAULT_CLIENTS = [
   'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
-  'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
+  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
   'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette','Oura',
-  'Pattern','Raazi Tea','Reale Actives','Reviews / Personal Development','Roz','Snif','Squigs','Stardust','SYS',
-  'Tein','The Absorption Company','Timebeam','TodayTix','Tushy',
+  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','SYS',
+  'Tein','The Absorption Company','Tilt','Timebeam','TodayTix','Tushy','U Beauty',
 ];
 
 
