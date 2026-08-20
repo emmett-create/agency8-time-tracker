@@ -5,7 +5,7 @@ const DEFAULT_CLIENTS = [
   'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
   'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette','Oura',
   'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','SYS',
-  'Tein','The Absorption Company','Tilt','Timebeam','TodayTix','Tushy','U Beauty',
+  'Tein','The Absorption Company','Tilt Beauty','Timebeam','TodayTix','Tushy','U Beauty',
 ];
 
 
