@@ -70,11 +70,24 @@ async function loadData() {
     let url = `${SUPABASE_URL}/rest/v1/time_entries?order=entry_date.desc,created_at.desc`;
     if (fromVal) url += `&entry_date=gte.${fromVal}`;
     if (toVal)   url += `&entry_date=lte.${toVal}`;
-    const resp = await fetch(url,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
-    );
-    if (!resp.ok) throw new Error(await resp.text());
-    allEntries = await resp.json();
+
+    // Supabase caps each response at 1000 rows (Content-Range), so wide date
+    // ranges were silently getting truncated to the most recent ~1000 entries.
+    // Page through with limit/offset until a page comes back short.
+    const PAGE_SIZE = 1000;
+    let all = [];
+    let offset = 0;
+    while (true) {
+      const resp = await fetch(`${url}&limit=${PAGE_SIZE}&offset=${offset}`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      );
+      if (!resp.ok) throw new Error(await resp.text());
+      const page = await resp.json();
+      all = all.concat(page);
+      if (page.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
+    }
+    allEntries = all;
     populateFilters();
     render();
   } catch (e) {
