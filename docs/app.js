@@ -49,6 +49,7 @@ async function init() {
   document.getElementById('fil-to').addEventListener('change', loadData);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
   document.getElementById('btn-export-person-client').addEventListener('click', exportPersonClientCSV);
+  document.getElementById('btn-export-person-client-pct').addEventListener('click', exportPersonClientPercentCSV);
 
   document.querySelectorAll('.chart-toggle[data-chart="person"]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -410,6 +411,32 @@ function exportPersonClientCSV() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `agency8-hours-by-person-client-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+function exportPersonClientPercentCSV() {
+  const entries = filterEntries();
+  const people  = [...new Set(entries.map(e => e.employee_name))].sort();
+  const clients = [...new Set(entries.map(e => e.client))].sort();
+
+  const minutesFor = (person, client) =>
+    entries.filter(e => e.employee_name === person && e.client === client)
+           .reduce((s, e) => s + e.duration_minutes, 0);
+
+  const rows = [
+    ['Person', ...clients, 'Total'],
+    ...people.map(p => {
+      const personTotal = clients.reduce((s, c) => s + minutesFor(p, c), 0);
+      const pcts = clients.map(c => personTotal ? +(minutesFor(p, c) / personTotal * 100).toFixed(1) : 0);
+      return [p, ...pcts.map(v => `${v}%`), '100%'];
+    }),
+  ];
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `agency8-hours-by-person-client-pct-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
 
