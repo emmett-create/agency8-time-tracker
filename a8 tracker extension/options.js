@@ -1,10 +1,13 @@
 // Agency 8 — Time Tracker options.js
 
+// Kept in sync with popup.js's copy of this same list (2026-10-07: these had
+// drifted apart — options.js was missing Gimme Seaweed, the Internal -
+// categories, Oura, Stardust, and U Beauty that popup.js already had).
 const DEFAULT_CLIENTS = [
-  'Allies of Skin','BORNTOSTANDOUT','Brodo','Counter','Dr. Squatch','Emma Relief','EvolveTogether',
-  'Feals','Fenty','Fur','Harper Wilde','HigherDOSE','Ilia','Kalshi','Kind Patches','Lenox and Sixteenth',
-  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Nette',
-  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','SYS','Tein','The Absorption Company','Tilt Beauty','Timebeam','TodayTix','Tushy',
+  'Allies of Skin','Biossance','BORNTOSTANDOUT','Brodo','Counter',"Dr. Diamond's Metacine",'Dr. Squatch','Emma Relief','EvolveTogether',
+  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
+  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Murad','Nette','Oura',
+  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','SYS','Tein','The Absorption Company','Tilt Beauty','Timebeam','TodayTix','Tushy','U Beauty',
 ];
 
 function mergeDefaults(stored, defaults) {
