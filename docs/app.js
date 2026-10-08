@@ -483,10 +483,35 @@ function donutOptions(entries) {
       },
       datalabels: {
         color: '#fff',
-        font: { size: 12, weight: 'bold' },
         formatter: (hours) => {
           const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
-          return pct >= 4 ? `${pct.toFixed(0)}%` : '';  // hide on slivers too thin to read
+          // Below ~0.5% the slice has no visible arc at all to anchor a
+          // label to, even pushed outside the ring — hide only those.
+          return pct >= 0.5 ? `${pct.toFixed(0)}%` : '';
+        },
+        // Small slices (under 4%) are too thin to fit text INSIDE them, so
+        // their label gets pushed just outside the ring instead (anchor/
+        // align/font all computed per-slice via these callbacks) rather
+        // than hidden entirely like before.
+        font: ctx => {
+          const hours = ctx.dataset.data[ctx.dataIndex];
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return { size: pct >= 4 ? 12 : 9, weight: 'bold' };
+        },
+        anchor: ctx => {
+          const hours = ctx.dataset.data[ctx.dataIndex];
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return pct >= 4 ? 'center' : 'end';
+        },
+        align: ctx => {
+          const hours = ctx.dataset.data[ctx.dataIndex];
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return pct >= 4 ? 'center' : 'end';
+        },
+        offset: ctx => {
+          const hours = ctx.dataset.data[ctx.dataIndex];
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return pct >= 4 ? 0 : 4;
         },
       },
       tooltip: {
