@@ -492,10 +492,12 @@ function donutOptions(entries) {
         // Outside-the-ring labels (tried 2026-10-08) crowded into an
         // unreadable mess with 15+ thin slivers — reverted to inside-only.
         // display:'auto' (this plugin's real fit/overlap detection) was
-        // still letting sub-2% slivers through in a half-overlapping,
-        // partially-cut-off way at the small end — Emmett's call: just
-        // hard-cut at 2% instead of relying on best-effort auto-fit there.
-        display: 'auto',
+        // hiding labels unpredictably on BOTH ends — sub-2% slivers in a
+        // half-overlapping mess, AND some well-above-2% slices too, on top
+        // of (not instead of) the formatter's own 2% cutoff below. The
+        // formatter is now the only thing deciding what shows — anything
+        // it returns text for gets drawn, no second auto-fit layer
+        // silently overriding that.
         font: ctx => {
           const hours = ctx.dataset.data[ctx.dataIndex];
           const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
