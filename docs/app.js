@@ -324,6 +324,10 @@ function renderCharts(entries) {
     type: 'doughnut',
     data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors }] },
     options: donutOptions(entries),
+    // Scoped to just this chart via the per-instance `plugins` array (not a
+    // global Chart.register) so the other bar charts on this dashboard
+    // don't suddenly grow value labels too.
+    plugins: [ChartDataLabels],
   });
 
   // Daily Hours — stacked by client, tooltip shows client → person breakdown
@@ -469,6 +473,7 @@ function stackedBarOptions(tooltipLabel, xTicksLimit) {
 }
 
 function donutOptions(entries) {
+  const totalMinutes = entries.reduce((s, e) => s + e.duration_minutes, 0);
   return {
     responsive: true,
     plugins: {
@@ -476,18 +481,28 @@ function donutOptions(entries) {
         position: 'right',
         labels: { color: '#aaa', font: { size: 12 }, padding: 12, boxWidth: 14 },
       },
+      datalabels: {
+        color: '#fff',
+        font: { size: 12, weight: 'bold' },
+        formatter: (hours) => {
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return pct >= 4 ? `${pct.toFixed(0)}%` : '';  // hide on slivers too thin to read
+        },
+      },
       tooltip: {
         callbacks: {
           label: ctx => {
             const client = ctx.label;
+            const clientMinutes = entries.filter(e => e.client === client).reduce((s, e) => s + e.duration_minutes, 0);
+            const pct = totalMinutes ? (clientMinutes / totalMinutes * 100).toFixed(1) : '0.0';
             const byPerson = {};
             entries.filter(e => e.client === client).forEach(e => {
               byPerson[e.employee_name] = (byPerson[e.employee_name] || 0) + e.duration_minutes;
             });
             const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
-            if (people.length <= 1) return ` ${client}: ${ctx.parsed}h`;
+            if (people.length <= 1) return ` ${client}: ${ctx.parsed}h (${pct}%)`;
             return [
-              ` ${client}: ${ctx.parsed}h`,
+              ` ${client}: ${ctx.parsed}h (${pct}%)`,
               ...people.map(([p, m]) => `  ↳ ${p}: ${(m / 60).toFixed(2)}h`),
             ];
           },
