@@ -489,20 +489,21 @@ function donutOptions(entries) {
       },
       datalabels: {
         color: '#fff',
-        font: { size: 12, weight: 'bold' },
-        // Outside-the-ring labels for small slices (tried 2026-10-08)
-        // crowded into an unreadable overlapping mess once there were 15+
-        // thin slivers bunched together — reverted to inside-only.
-        //
-        // A fixed "hide below 4%" cutoff (also tried) was the wrong tool —
-        // whether text actually fits isn't really a function of percentage
-        // at all (it depends on font size, label length, and how big the
-        // whole chart is rendered). display:'auto' is this plugin's actual
-        // built-in fit-detection: it measures each label for real and only
-        // hides the ones that don't fit or that collide with a neighbor,
-        // instead of a guessed-at magic number.
+        // Outside-the-ring labels (tried 2026-10-08) crowded into an
+        // unreadable mess with 15+ thin slivers — reverted to inside-only.
+        // display:'auto' is this plugin's real fit/overlap detection — it
+        // measures each label for real rather than guessing a magic
+        // percentage cutoff, and only hides ones that truly don't fit.
         display: 'auto',
-        formatter: (hours) => `${totalMinutes ? (hours * 60 / totalMinutes * 100).toFixed(0) : 0}%`,
+        // One decimal place now (10.4%, not 10%) — smaller font on smaller
+        // slices so the extra digit still has room to fit inside them.
+        font: ctx => {
+          const hours = ctx.dataset.data[ctx.dataIndex];
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          const size = pct >= 8 ? 12 : pct >= 4 ? 10 : pct >= 2 ? 8 : 7;
+          return { size, weight: 'bold' };
+        },
+        formatter: (hours) => `${totalMinutes ? (hours * 60 / totalMinutes * 100).toFixed(1) : '0.0'}%`,
       },
       tooltip: {
         callbacks: {
