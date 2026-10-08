@@ -492,12 +492,17 @@ function donutOptions(entries) {
         font: { size: 12, weight: 'bold' },
         // Outside-the-ring labels for small slices (tried 2026-10-08)
         // crowded into an unreadable overlapping mess once there were 15+
-        // thin slivers bunched together — reverted. Back to inside-only,
-        // simply hidden below 4% rather than forced to fit somewhere.
-        formatter: (hours) => {
-          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
-          return pct >= 4 ? `${pct.toFixed(0)}%` : '';
-        },
+        // thin slivers bunched together — reverted to inside-only.
+        //
+        // A fixed "hide below 4%" cutoff (also tried) was the wrong tool —
+        // whether text actually fits isn't really a function of percentage
+        // at all (it depends on font size, label length, and how big the
+        // whole chart is rendered). display:'auto' is this plugin's actual
+        // built-in fit-detection: it measures each label for real and only
+        // hides the ones that don't fit or that collide with a neighbor,
+        // instead of a guessed-at magic number.
+        display: 'auto',
+        formatter: (hours) => `${totalMinutes ? (hours * 60 / totalMinutes * 100).toFixed(0) : 0}%`,
       },
       tooltip: {
         callbacks: {
