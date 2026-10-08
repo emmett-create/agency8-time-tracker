@@ -491,19 +491,21 @@ function donutOptions(entries) {
         color: '#fff',
         // Outside-the-ring labels (tried 2026-10-08) crowded into an
         // unreadable mess with 15+ thin slivers — reverted to inside-only.
-        // display:'auto' is this plugin's real fit/overlap detection — it
-        // measures each label for real rather than guessing a magic
-        // percentage cutoff, and only hides ones that truly don't fit.
+        // display:'auto' (this plugin's real fit/overlap detection) was
+        // still letting sub-2% slivers through in a half-overlapping,
+        // partially-cut-off way at the small end — Emmett's call: just
+        // hard-cut at 2% instead of relying on best-effort auto-fit there.
         display: 'auto',
-        // One decimal place now (10.4%, not 10%) — smaller font on smaller
-        // slices so the extra digit still has room to fit inside them.
         font: ctx => {
           const hours = ctx.dataset.data[ctx.dataIndex];
           const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
-          const size = pct >= 8 ? 12 : pct >= 4 ? 10 : pct >= 2 ? 8 : 7;
+          const size = pct >= 8 ? 12 : pct >= 4 ? 10 : 8;
           return { size, weight: 'bold' };
         },
-        formatter: (hours) => `${totalMinutes ? (hours * 60 / totalMinutes * 100).toFixed(1) : '0.0'}%`,
+        formatter: (hours) => {
+          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
+          return pct >= 2 ? `${pct.toFixed(1)}%` : '';
+        },
       },
       tooltip: {
         callbacks: {
