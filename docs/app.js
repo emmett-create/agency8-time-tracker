@@ -374,7 +374,13 @@ function renderTable(entries) {
 }
 
 function exportCSV() {
-  const entries = filterEntries();
+  // Grouped by person (then by client within each person) so one person's
+  // whole client breakdown reads together, instead of being interleaved
+  // with everyone else's rows in date order (Emmett, 2026-10-08).
+  const entries = [...filterEntries()].sort((a, b) =>
+    a.employee_name.localeCompare(b.employee_name) ||
+    a.client.localeCompare(b.client) ||
+    a.entry_date.localeCompare(b.entry_date));
   const rows = [
     ['Date','Person','Client','Task','Duration (min)','Notes'],
     ...entries.map(e => [e.entry_date, e.employee_name, e.client, e.task_type, e.duration_minutes, e.notes || '']),
