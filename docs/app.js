@@ -324,10 +324,6 @@ function renderCharts(entries) {
     type: 'doughnut',
     data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors }] },
     options: donutOptions(entries),
-    // Scoped to just this chart via the per-instance `plugins` array (not a
-    // global Chart.register) so the other bar charts on this dashboard
-    // don't suddenly grow value labels too.
-    plugins: [ChartDataLabels],
   });
 
   // Daily Hours — stacked by client, tooltip shows client → person breakdown
@@ -487,28 +483,12 @@ function donutOptions(entries) {
         position: 'right',
         labels: { color: '#aaa', font: { size: 12 }, padding: 12, boxWidth: 14 },
       },
-      datalabels: {
-        color: '#fff',
-        // Outside-the-ring labels (tried 2026-10-08) crowded into an
-        // unreadable mess with 15+ thin slivers — reverted to inside-only.
-        // display:'auto' (this plugin's real fit/overlap detection) was
-        // hiding labels unpredictably on BOTH ends — sub-2% slivers in a
-        // half-overlapping mess, AND some well-above-2% slices too, on top
-        // of (not instead of) the formatter's own 2% cutoff below. The
-        // formatter is now the only thing deciding what shows — anything
-        // it returns text for gets drawn, no second auto-fit layer
-        // silently overriding that.
-        font: ctx => {
-          const hours = ctx.dataset.data[ctx.dataIndex];
-          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
-          const size = pct >= 8 ? 12 : pct >= 4 ? 10 : 8;
-          return { size, weight: 'bold' };
-        },
-        formatter: (hours) => {
-          const pct = totalMinutes ? (hours * 60 / totalMinutes * 100) : 0;
-          return pct >= 2 ? `${pct.toFixed(1)}%` : '';
-        },
-      },
+      // On-chart percentage labels (tried several variants 2026-10-08: hide
+      // below a fixed %, outside-ring placement, display:'auto' fit
+      // detection) kept causing one layout problem or another with this
+      // many slices — Emmett's call: drop them entirely and show the
+      // percentage only on hover, in the tooltip below, where there's
+      // actually room to show it precisely without fighting for space.
       tooltip: {
         callbacks: {
           label: ctx => {
