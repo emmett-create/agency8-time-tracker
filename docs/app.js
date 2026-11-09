@@ -4,12 +4,7 @@ let allEntries = [];
 let charts = {};
 let personChartMode = 'client'; // always by client now
 
-// Flip to true once the new extension version (with the Task dropdown
-// restored) is approved by Google and real task data starts coming in
-// (Emmett, 2026-11-09: wants this built and ready now, but not visible on
-// the live dashboard until then — there's nothing but old stale task
-// values to show before that). Just this one switch + push once it's time.
-const SHOW_TASK_CHART = false;
+const SHOW_TASK_CHART = true;
 
 // Replaced with Loulou's updated task categories (Slack, 2026-11-09) — the
 // old list (Meetings (Ext), Shopify, ShopMy, etc.) is retired; any
