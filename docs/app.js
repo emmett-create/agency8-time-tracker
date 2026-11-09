@@ -4,6 +4,13 @@ let allEntries = [];
 let charts = {};
 let personChartMode = 'client'; // always by client now
 
+// Flip to true once the new extension version (with the Task dropdown
+// restored) is approved by Google and real task data starts coming in
+// (Emmett, 2026-11-09: wants this built and ready now, but not visible on
+// the live dashboard until then — there's nothing but old stale task
+// values to show before that). Just this one switch + push once it's time.
+const SHOW_TASK_CHART = false;
+
 // Replaced with Loulou's updated task categories (Slack, 2026-11-09) — the
 // old list (Meetings (Ext), Shopify, ShopMy, etc.) is retired; any
 // historical entries still carrying an old task name just fall back to the
@@ -33,6 +40,7 @@ async function init() {
     return;
   }
   document.getElementById('view-main').classList.remove('hidden');
+  document.getElementById('task-chart-row').classList.toggle('hidden', !SHOW_TASK_CHART);
 
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fil-from').value = today.slice(0, 7) + '-01';
@@ -319,6 +327,19 @@ function renderCharts(entries) {
     data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors }] },
     options: donutOptions(entries),
   });
+
+  // Hours by Task — stacked by task within each client (the stackedByTask
+  // helper already existed, unused, from before tasks were removed — this
+  // is its first real caller). Reuses personTooltip's generic "Label: Xh"
+  // format, which doesn't actually reference "person" anywhere in its code.
+  if (SHOW_TASK_CHART) {
+    const { groups: taskGroups, datasets: taskDatasets } = stackedByTask(entries, 'client', true);
+    charts.taskBreakdown = new Chart(document.getElementById('chart-task-breakdown'), {
+      type: 'bar',
+      data: { labels: taskGroups, datasets: taskDatasets },
+      options: stackedBarOptions(personTooltip(entries, 'client', false)),
+    });
+  }
 
   // Daily Hours — stacked by client, tooltip shows client → person breakdown
   const { groups: dayGroups, datasets: dayDatasets } = stackedByClient(entries, 'entry_date');

@@ -110,6 +110,16 @@
           </div>
         </div>
 
+        <!-- Hidden until SHOW_TASK_CHART is flipped to true in app.js (see
+             there for why) — toggled at render time, not deleted, so it's a
+             one-line flip + push once real task data exists. -->
+        <div class="charts-row" id="task-chart-row">
+          <div class="chart-card chart-card--wide">
+            <div class="chart-title">Hours by Task</div>
+            <canvas id="chart-task-breakdown"></canvas>
+          </div>
+        </div>
+
         <!-- Entries table -->
         <div class="table-card">
           <div class="table-header">
