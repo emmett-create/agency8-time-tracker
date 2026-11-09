@@ -16,12 +16,22 @@ const DEFAULT_CLIENTS = [
 ];
 
 // Task categories (Loulou, Slack 2026-11-09 — "we're going to add tasks back
-// to the time tracker"). Same merge/customize pattern as DEFAULT_CLIENTS.
+// to the time tracker").
 const DEFAULT_TASKS = [
   'External Comms','Internal Meetings','Strategy/Planning','Sourcing + Spreadsheet Management',
   'Creator Comms','Material Development','Contracting + Invoicing','Monthly Reporting','Mailer / Special Project',
 ];
 
+// Bump this whenever DEFAULT_CLIENTS/DEFAULT_TASKS change. The old
+// mergeDefaults() approach only ever ADDED missing defaults to whatever was
+// already in a person's local storage — it never removed anything, so stale
+// entries from older list versions (e.g. "LTK", "Meetings (Ext)", "Meetings
+// (Int)") stuck around forever, merged in alongside the real list, on any
+// install that had saved settings before the list changed (caught via
+// Mackenzie's screenshot, 2026-11-09). Now a version mismatch force-resets
+// stored clients/tasks to exactly the current defaults — only an explicit
+// edit+save on the Settings page after that persists past the next bump.
+const LISTS_VERSION = 2;
 
 let timerInterval = null;
 let settings = {};
@@ -54,26 +64,30 @@ async function init() {
   document.getElementById('btn-timer').addEventListener('click', handleTimer);
 }
 
-function mergeDefaults(stored, defaults) {
-  const lower = new Set(stored.map(c => c.toLowerCase()));
-  const merged = [...stored];
-  for (const c of defaults) {
-    if (!lower.has(c.toLowerCase())) merged.push(c);
-  }
-  return merged.sort((a, b) => a.localeCompare(b));
+function sortedCopy(arr) {
+  return [...arr].sort((a, b) => a.localeCompare(b));
 }
 
 async function loadSettings() {
   const s = await chrome.storage.local.get([
-    'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks',
+    'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks','listsVersion',
   ]);
+
+  let clients = s.clients;
+  let tasks   = s.tasks;
+  if (s.listsVersion !== LISTS_VERSION) {
+    clients = DEFAULT_CLIENTS;
+    tasks   = DEFAULT_TASKS;
+    await chrome.storage.local.set({ clients, tasks, listsVersion: LISTS_VERSION });
+  }
+
   return {
     name:         s.name || '',
     supabaseUrl:  s.supabaseUrl || '',
     supabaseKey:  s.supabaseKey || '',
     dashboardUrl: s.dashboardUrl || '',
-    clients:      s.clients ? mergeDefaults(s.clients, DEFAULT_CLIENTS) : DEFAULT_CLIENTS,
-    tasks:        s.tasks ? mergeDefaults(s.tasks, DEFAULT_TASKS) : DEFAULT_TASKS,
+    clients:      sortedCopy(clients && clients.length ? clients : DEFAULT_CLIENTS),
+    tasks:        sortedCopy(tasks && tasks.length ? tasks : DEFAULT_TASKS),
   };
 }
 
