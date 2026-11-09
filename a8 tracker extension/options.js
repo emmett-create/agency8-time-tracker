@@ -3,11 +3,20 @@
 // Kept in sync with popup.js's copy of this same list (2026-10-07: these had
 // drifted apart — options.js was missing Gimme Seaweed, the Internal -
 // categories, Oura, Stardust, and U Beauty that popup.js already had).
+// Replaced with Loulou's updated list (Slack, 2026-11-09) — see popup.js's
+// copy of this same array for the full note on what changed and why.
 const DEFAULT_CLIENTS = [
-  'Allies of Skin','Biossance','BORNTOSTANDOUT','Brodo','Counter',"Dr. Diamond's Metacine",'Dr. Squatch','Emma Relief','EvolveTogether',
-  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
-  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Murad','Nette','Oura',
-  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','SYS','Tein','The Absorption Company','Tilt Beauty','Timebeam','TodayTix','Tushy','U Beauty',
+  'Biossance','BORNTOSTANDOUT','Brodo','Clare V.','Counter',"Dr. Diamond's Metacine",'Dr. Squatch','EvolveTogether',
+  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','Ilia','MadeGood','Maev','Magic Molecule','Magna','Merit','Momofuku','Moon Juice','Murad','Personal Day',
+  'Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','Stars + Honey','Stocked','SYS',
+  'Tein','The Absorption Company','Tilt Beauty','Timebeam','Tushy','U Beauty',
+  'DTC','1:1s','Professional Development',
+];
+
+// Kept in sync with popup.js's copy — see there for the full note.
+const DEFAULT_TASKS = [
+  'External Comms','Internal Meetings','Strategy/Planning','Sourcing + Spreadsheet Management',
+  'Creator Comms','Material Development','Contracting + Invoicing','Monthly Reporting','Mailer / Special Project',
 ];
 
 function mergeDefaults(stored, defaults) {
@@ -21,7 +30,7 @@ function mergeDefaults(stored, defaults) {
 
 async function init() {
   const s = await chrome.storage.local.get([
-    'name','supabaseUrl','supabaseKey','dashboardUrl','clients',
+    'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks',
   ]);
 
   document.getElementById('inp-name').value      = s.name || '';
@@ -29,6 +38,7 @@ async function init() {
   document.getElementById('inp-key').value       = s.supabaseKey || '';
   document.getElementById('inp-dashboard').value = s.dashboardUrl || '';
   document.getElementById('inp-clients').value   = (s.clients ? mergeDefaults(s.clients, DEFAULT_CLIENTS) : DEFAULT_CLIENTS).join('\n');
+  document.getElementById('inp-tasks').value     = (s.tasks ? mergeDefaults(s.tasks, DEFAULT_TASKS) : DEFAULT_TASKS).join('\n');
 
   document.getElementById('btn-save').addEventListener('click', save);
 }
@@ -40,8 +50,10 @@ async function save() {
   const dashboardUrl = document.getElementById('inp-dashboard').value.trim();
   const clients     = document.getElementById('inp-clients').value
     .split('\n').map(l => l.trim()).filter(Boolean);
+  const tasks       = document.getElementById('inp-tasks').value
+    .split('\n').map(l => l.trim()).filter(Boolean);
 
-  await chrome.storage.local.set({ name, supabaseUrl, supabaseKey, dashboardUrl, clients });
+  await chrome.storage.local.set({ name, supabaseUrl, supabaseKey, dashboardUrl, clients, tasks });
 
   const confirm = document.getElementById('save-confirm');
   confirm.classList.add('visible');

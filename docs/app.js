@@ -4,26 +4,20 @@ let allEntries = [];
 let charts = {};
 let personChartMode = 'client'; // always by client now
 
+// Replaced with Loulou's updated task categories (Slack, 2026-11-09) — the
+// old list (Meetings (Ext), Shopify, ShopMy, etc.) is retired; any
+// historical entries still carrying an old task name just fall back to the
+// flat gray below instead of erroring.
 const TASK_COLORS = {
-  'Meetings (Ext)':          '#9c8fff',
-  'Meetings (Int)':          '#6c63ff',
-  'Sourcing/List Building':  '#ff6b9d',
-  'Strategy/Planning':       '#43e97b',
-  'Paid':                    '#ffd700',
-  'Client Comms':            '#4fc3f7',
-  'Creator Comms (DM)':      '#f06292',
-  'Creator Comms (Email)':   '#4db6ac',
-  'Reporting':               '#ff8a65',
-  'Shopify':                 '#ff7043',
-  'Spreadsheet Management':  '#fff176',
-  'Content Brief':           '#aed581',
-  'Outreach Copy':           '#f48fb1',
-  'ShopMy':                  '#ce93d8',
-  'TikTok Shop':             '#80cbc4',
-  'LTK':                     '#f7971e',
-  'Onboarding':              '#aed581',
-  'Offboarding':             '#4db6ac',
-  'Newsletters':             '#80deea',
+  'External Comms':                     '#4fc3f7',
+  'Internal Meetings':                  '#6c63ff',
+  'Strategy/Planning':                  '#43e97b',
+  'Sourcing + Spreadsheet Management':  '#ffd700',
+  'Creator Comms':                      '#f06292',
+  'Material Development':               '#aed581',
+  'Contracting + Invoicing':            '#ff8a65',
+  'Monthly Reporting':                  '#ce93d8',
+  'Mailer / Special Project':           '#80cbc4',
 };
 
 const AUTO_COLORS = [

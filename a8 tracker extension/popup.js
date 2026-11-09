@@ -1,11 +1,25 @@
 // Agency 8 — Time Tracker popup.js
 
+// Replaced with Loulou's updated list (Slack, 2026-11-09) — drops several
+// clients no longer active (Allies of Skin, Emma Relief, HigherDOSE, Kalshi,
+// Kind Patches, Lenox and Sixteenth, Nette, Oura, Pattern, TodayTix, the old
+// "Internal - ..." entries) and adds new ones (Clare V., Moon Juice,
+// Personal Day, Stars + Honey, Stocked) plus three non-client time buckets
+// at the end (DTC, 1:1s, Professional Development) replacing the old
+// "Internal - ..." entries for the same purpose.
 const DEFAULT_CLIENTS = [
-  'Allies of Skin','Biossance','BORNTOSTANDOUT','Brodo','Counter',"Dr. Diamond's Metacine",'Dr. Squatch','Emma Relief','EvolveTogether',
-  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','HigherDOSE','Ilia','Internal - Calls','Internal - Ops','Internal - Professional Development','Kalshi','Kind Patches','Lenox and Sixteenth',
-  'MadeGood','Magic Molecule','Magna','Maev','Merit','Momofuku','Murad','Nette','Oura',
-  'Pattern','Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','SYS',
-  'Tein','The Absorption Company','Tilt Beauty','Timebeam','TodayTix','Tushy','U Beauty',
+  'Biossance','BORNTOSTANDOUT','Brodo','Clare V.','Counter',"Dr. Diamond's Metacine",'Dr. Squatch','EvolveTogether',
+  'Feals','Fenty','Fur','Gimme Seaweed','Harper Wilde','Ilia','MadeGood','Maev','Magic Molecule','Magna','Merit','Momofuku','Moon Juice','Murad','Personal Day',
+  'Raazi Tea','Reale Actives','Roz','Snif','Squigs','Stardust','Stars + Honey','Stocked','SYS',
+  'Tein','The Absorption Company','Tilt Beauty','Timebeam','Tushy','U Beauty',
+  'DTC','1:1s','Professional Development',
+];
+
+// Task categories (Loulou, Slack 2026-11-09 — "we're going to add tasks back
+// to the time tracker"). Same merge/customize pattern as DEFAULT_CLIENTS.
+const DEFAULT_TASKS = [
+  'External Comms','Internal Meetings','Strategy/Planning','Sourcing + Spreadsheet Management',
+  'Creator Comms','Material Development','Contracting + Invoicing','Monthly Reporting','Mailer / Special Project',
 ];
 
 
@@ -51,7 +65,7 @@ function mergeDefaults(stored, defaults) {
 
 async function loadSettings() {
   const s = await chrome.storage.local.get([
-    'name','supabaseUrl','supabaseKey','dashboardUrl','clients',
+    'name','supabaseUrl','supabaseKey','dashboardUrl','clients','tasks',
   ]);
   return {
     name:         s.name || '',
@@ -59,30 +73,43 @@ async function loadSettings() {
     supabaseKey:  s.supabaseKey || '',
     dashboardUrl: s.dashboardUrl || '',
     clients:      s.clients ? mergeDefaults(s.clients, DEFAULT_CLIENTS) : DEFAULT_CLIENTS,
+    tasks:        s.tasks ? mergeDefaults(s.tasks, DEFAULT_TASKS) : DEFAULT_TASKS,
   };
 }
 
 function populateSelects() {
   const clientSel = document.getElementById('sel-client');
-  chrome.storage.local.get(['lastClient'], s => {
+  const taskSel   = document.getElementById('sel-task');
+  chrome.storage.local.get(['lastClient','lastTask'], s => {
     settings.clients.forEach(c => {
       const opt = document.createElement('option');
       opt.value = opt.textContent = c;
       if (c === s.lastClient) opt.selected = true;
       clientSel.appendChild(opt);
     });
+    settings.tasks.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = t;
+      if (t === s.lastTask) opt.selected = true;
+      taskSel.appendChild(opt);
+    });
   });
   clientSel.addEventListener('change', () =>
     chrome.storage.local.set({ lastClient: clientSel.value })
   );
+  taskSel.addEventListener('change', () =>
+    chrome.storage.local.set({ lastTask: taskSel.value })
+  );
 }
 
 async function restoreTimerState() {
-  const s = await chrome.storage.local.get(['timerRunning','timerStart','timerClient','timerNotes']);
+  const s = await chrome.storage.local.get(['timerRunning','timerStart','timerClient','timerTask','timerNotes']);
   if (s.timerRunning && s.timerStart) {
     document.getElementById('sel-client').value = s.timerClient || '';
+    document.getElementById('sel-task').value   = s.timerTask || '';
     document.getElementById('txt-notes').value  = s.timerNotes || '';
     document.getElementById('sel-client').disabled = true;
+    document.getElementById('sel-task').disabled   = true;
     document.getElementById('txt-notes').disabled  = true;
 
     const btn = document.getElementById('btn-timer');
@@ -107,7 +134,7 @@ function startDisplayUpdate(startTime) {
 }
 
 async function handleTimer() {
-  const s = await chrome.storage.local.get(['timerRunning','timerStart','timerClient','timerNotes']);
+  const s = await chrome.storage.local.get(['timerRunning','timerStart','timerClient','timerTask','timerNotes']);
 
   if (s.timerRunning) {
     clearInterval(timerInterval);
@@ -115,7 +142,7 @@ async function handleTimer() {
 
     const durationMinutes = Math.round((Date.now() - s.timerStart) / 60000);
     if (durationMinutes < 1) {
-      await chrome.storage.local.remove(['timerRunning','timerStart','timerClient','timerNotes']);
+      await chrome.storage.local.remove(['timerRunning','timerStart','timerClient','timerTask','timerNotes']);
       resetTimerUI();
       return;
     }
@@ -123,18 +150,19 @@ async function handleTimer() {
     await submitEntry({
       employee_name:    settings.name,
       client:           s.timerClient,
-      task_type:        '',
+      task_type:        s.timerTask || '',
       duration_minutes: durationMinutes,
       entry_date:       todayDate(),
       notes:            s.timerNotes || '',
     });
 
-    await chrome.storage.local.remove(['timerRunning','timerStart','timerClient','timerNotes']);
+    await chrome.storage.local.remove(['timerRunning','timerStart','timerClient','timerTask','timerNotes']);
     resetTimerUI();
     await loadEntriesForDate(selectedDate);
 
   } else {
     const client = document.getElementById('sel-client').value;
+    const task   = document.getElementById('sel-task').value;
     const notes  = document.getElementById('txt-notes').value.trim();
     const startTime = Date.now();
 
@@ -142,10 +170,12 @@ async function handleTimer() {
       timerRunning: true,
       timerStart:   startTime,
       timerClient:  client,
+      timerTask:    task,
       timerNotes:   notes,
     });
 
     document.getElementById('sel-client').disabled = true;
+    document.getElementById('sel-task').disabled   = true;
     document.getElementById('txt-notes').disabled  = true;
 
     const btn = document.getElementById('btn-timer');
@@ -160,6 +190,7 @@ function resetTimerUI() {
   document.getElementById('timer-display').textContent = '00:00:00';
   document.getElementById('timer-display').classList.remove('running');
   document.getElementById('sel-client').disabled = false;
+  document.getElementById('sel-task').disabled   = false;
   document.getElementById('txt-notes').disabled  = false;
   document.getElementById('txt-notes').value     = '';
 
@@ -281,6 +312,9 @@ function startEditEntry(entry) {
   const clientOptions = settings.clients.map(c =>
     `<option value="${c}"${c === entry.client ? ' selected' : ''}>${c}</option>`
   ).join('');
+  const taskOptions = settings.tasks.map(t =>
+    `<option value="${t}"${t === entry.task_type ? ' selected' : ''}>${t}</option>`
+  ).join('');
 
   entryEl.innerHTML = `
     <div class="edit-form">
@@ -288,6 +322,10 @@ function startEditEntry(entry) {
         <div class="field">
           <label>Client</label>
           <select class="edit-client">${clientOptions}</select>
+        </div>
+        <div class="field">
+          <label>Task</label>
+          <select class="edit-task">${taskOptions}</select>
         </div>
       </div>
       <div class="field-row">
@@ -328,9 +366,13 @@ function startSplitEntry(entry, entryEl) {
     const clientOpts = settings.clients.map(c =>
       `<option value="${c}"${c === entry.client ? ' selected' : ''}>${c}</option>`
     ).join('');
+    const taskOpts = settings.tasks.map(t =>
+      `<option value="${t}"${t === entry.task_type ? ' selected' : ''}>${t}</option>`
+    ).join('');
     return `
       <div class="split-row">
         <select class="split-client-sel">${clientOpts}</select>
+        <select class="split-task-sel">${taskOpts}</select>
         <input type="number" class="split-min" placeholder="min" min="1">
         <button class="btn-remove-row" ${index === 0 ? 'style="visibility:hidden"' : ''}>×</button>
       </div>
@@ -402,7 +444,7 @@ function startSplitEntry(entry, entryEl) {
     const rows = entryEl.querySelectorAll('.split-row');
     const splits = [...rows].map(row => ({
       client:           row.querySelector('.split-client-sel').value,
-      task_type:        '',
+      task_type:        row.querySelector('.split-task-sel').value,
       duration_minutes: parseInt(row.querySelector('.split-min').value),
     }));
 
@@ -439,6 +481,7 @@ function startSplitEntry(entry, entryEl) {
 
 async function saveEditEntry(id, entryEl) {
   const client    = entryEl.querySelector('.edit-client').value;
+  const task      = entryEl.querySelector('.edit-task').value;
   const entryDate = entryEl.querySelector('.edit-date').value;
   const duration  = parseInt(entryEl.querySelector('.edit-duration').value);
   const notes     = entryEl.querySelector('.edit-notes').value.trim();
@@ -451,7 +494,7 @@ async function saveEditEntry(id, entryEl) {
       'Authorization': `Bearer ${settings.supabaseKey}`,
       'Prefer':        'return=minimal',
     },
-    body: JSON.stringify({ client, task_type: '', entry_date: entryDate, duration_minutes: duration, notes }),
+    body: JSON.stringify({ client, task_type: task, entry_date: entryDate, duration_minutes: duration, notes }),
   });
 
   await loadEntriesForDate(selectedDate);
